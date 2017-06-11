@@ -1,0 +1,8 @@
+(0)    call,,,100
+(1)    :=,123,,Temp0
+(2)    write,,,Temp0
+(3)    label,,,100
+(4)    :=,1,,Temp1
+(5)    write,,,Temp1
+(6)    writeln,,,
+(7)    end,,,

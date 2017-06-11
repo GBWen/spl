@@ -1,0 +1,15 @@
+(0)    :=,A,,Temp0
+(1)    :=,B,,Temp1
+(2)    >,Temp0,Temp1,Temp2
+(3)    jnz,Temp2,,5
+(4)    j,,,10
+(5)    :=,C,,Temp3
+(6)    :=,A,,Temp4
+(7)    :=,Temp4,,Temp3
+(8)    :=,Temp3,,C
+(9)    jnz,Temp2,,14
+(10)    :=,C,,Temp5
+(11)    :=,B,,Temp6
+(12)    :=,Temp6,,Temp5
+(13)    :=,Temp5,,C
+(14)    end,,,

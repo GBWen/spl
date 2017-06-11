@@ -1,0 +1,7 @@
+(0)    :=,A,,Temp0
+(1)    write,,,Temp0
+(2)    writeln,,,
+(3)    :=,A,,Temp1
+(4)    write,,,Temp1
+(5)    writeln,,,
+(6)    end,,,

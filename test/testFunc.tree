@@ -1,0 +1,60 @@
+Sub-program number 1
+-----print Header-----
+	program
+	testFunc
+	;
+-----print Decl-----
+Decl : C
+	integer
+-----print Proc-----
+Proc : mintest
+	Sub-program number 0
+	-----print Header-----
+		function
+		mintest
+			(
+							A
+							B
+					:
+						integer
+			)
+		:
+			integer
+	-----print Decl-----
+	Decl : A
+		integer
+	Decl : B
+		integer
+	-----print Proc-----
+	-----print Param-----
+	name: A reference: 0
+		integer
+	name: B reference: 0
+		integer
+	-----print Block-----
+		if
+			if
+			>
+				A
+				B
+			then
+				exit
+					B
+			else
+				exit
+					A
+	-----end Block-----
+-----print Param-----
+-----print Block-----
+	:=
+		C
+		mintest
+			(
+				10
+				20
+			)
+	writeln
+		(
+			C
+		)
+-----end Block-----

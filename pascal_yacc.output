@@ -1,0 +1,4740 @@
+Terminals unused in grammar
+
+   TOK_READLN
+
+
+State 4 conflicts: 1 shift/reduce
+State 13 conflicts: 1 shift/reduce
+State 31 conflicts: 1 shift/reduce
+State 66 conflicts: 1 shift/reduce
+State 69 conflicts: 2 shift/reduce
+State 117 conflicts: 1 shift/reduce
+State 191 conflicts: 1 shift/reduce
+State 192 conflicts: 1 shift/reduce
+State 197 conflicts: 1 shift/reduce
+State 205 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: program_head routine TOK_DOT
+
+    2 program_head: TOK_PROGRAM NAME TOK_SEMI
+
+    3 $@1: %empty
+
+    4 program_head: error $@1 TOK_SEMI
+
+    5 routine: routine_head routine_body
+
+    6 sub_routine: routine_head routine_body
+
+    7 routine_head: label_part const_part type_part var_part routine_part
+
+    8 label_part: label_list
+    9           | %empty
+
+   10 label_list: label_list single_label
+   11           | single_label
+
+   12 single_label: TOK_LABEL CONST_INTEGER TOK_SEMI
+
+   13 $@2: %empty
+
+   14 single_label: error $@2 TOK_SEMI
+
+   15 const_part: TOK_CONST const_expr_list
+   16           | %empty
+
+   17 const_expr_list: const_expr_list const_expr
+   18                | const_expr
+
+   19 const_expr: NAME TOK_EQUAL const_value TOK_SEMI
+
+   20 $@3: %empty
+
+   21 const_expr: error $@3 TOK_SEMI
+
+   22 const_value: CONST_INTEGER
+   23            | CONST_REAL
+   24            | CONST_CHAR
+   25            | CONST_STRING
+   26            | SYS_CON
+
+   27 SYS_CON: TOK_MAXINT
+   28        | CONST_BOOLEAN
+
+   29 type_part: TOK_TYPE type_decl_list
+   30          | %empty
+
+   31 type_decl_list: type_decl_list type_definition
+   32               | type_definition
+
+   33 type_definition: NAME TOK_EQUAL type_decl TOK_SEMI
+
+   34 $@4: %empty
+
+   35 type_definition: error $@4 TOK_SEMI
+
+   36 type_decl: simple_type_decl
+   37          | array_type_decl
+   38          | record_type_decl
+
+   39 simple_type_decl: SYS_TYPE
+   40                 | NAME
+   41                 | TOK_LP name_list TOK_RP
+   42                 | const_value TOK_DOT TOK_DOT const_value
+   43                 | TOK_MINUS const_value TOK_DOT TOK_DOT const_value
+   44                 | TOK_MINUS const_value TOK_DOT TOK_DOT TOK_MINUS const_value
+   45                 | NAME TOK_DOT TOK_DOT NAME
+
+   46 SYS_TYPE: TOK_BOOLEAN
+   47         | TOK_CHAR
+   48         | TOK_INTEGER
+   49         | TOK_REAL
+   50         | TOK_STRING
+
+   51 array_type_decl: TOK_ARRAY TOK_LB simple_type_decl TOK_RB TOK_OF type_decl
+
+   52 record_type_decl: TOK_RECORD field_decl_list TOK_END
+
+   53 field_decl_list: field_decl_list field_decl
+   54                | field_decl
+
+   55 field_decl: name_list TOK_COLON type_decl TOK_SEMI
+
+   56 $@5: %empty
+
+   57 field_decl: error $@5 TOK_SEMI
+
+   58 name_list: name_list TOK_COMMA NAME
+   59          | NAME
+
+   60 var_part: TOK_VAR var_decl_list
+   61         | %empty
+
+   62 var_decl_list: var_decl_list var_decl
+   63              | var_decl
+
+   64 var_decl: name_list TOK_COLON type_decl TOK_SEMI
+
+   65 $@6: %empty
+
+   66 var_decl: error $@6 TOK_SEMI
+
+   67 routine_part: routine_part function_decl
+   68             | routine_part procedure_decl
+   69             | function_decl
+   70             | procedure_decl
+   71             | %empty
+   72             | routine_part error
+
+   73 function_decl: function_head TOK_SEMI sub_routine TOK_SEMI
+
+   74 $@7: %empty
+
+   75 function_head: TOK_FUNCTION NAME $@7 parameters TOK_COLON simple_type_decl
+
+   76 procedure_decl: procedure_head TOK_SEMI sub_routine TOK_SEMI
+
+   77 $@8: %empty
+
+   78 procedure_head: TOK_PROCEDURE NAME $@8 parameters
+
+   79 parameters: TOK_LP para_decl_list TOK_RP
+   80           | %empty
+
+   81 para_decl_list: para_decl_list TOK_SEMI para_type_list
+   82               | para_type_list
+   83               | para_decl_list TOK_SEMI error
+
+   84 para_type_list: var_para_list TOK_COLON simple_type_decl
+   85               | val_para_list TOK_COLON simple_type_decl
+
+   86 var_para_list: TOK_VAR name_list
+
+   87 val_para_list: name_list
+
+   88 routine_body: compound_stmt
+
+   89 compound_stmt: TOK_BEGIN stmt_list TOK_END
+
+   90 stmt_list: stmt_list stmt TOK_SEMI
+   91          | %empty
+
+   92 stmt: CONST_INTEGER TOK_COLON non_label_stmt
+   93     | non_label_stmt
+
+   94 non_label_stmt: assign_stmt
+   95               | proc_stmt
+   96               | compound_stmt
+   97               | if_stmt
+   98               | repeat_stmt
+   99               | while_stmt
+  100               | for_stmt
+  101               | case_stmt
+  102               | goto_stmt
+  103               | error
+
+  104 assign_stmt: NAME TOK_ASSIGN expression
+  105            | NAME TOK_LB expression_list TOK_RB TOK_ASSIGN expression
+  106            | NAME TOK_DOT NAME TOK_ASSIGN expression
+
+  107 proc_stmt: NAME
+  108          | NAME TOK_LP args_list TOK_RP
+  109          | SYS_PROC
+  110          | SYS_PROC TOK_LP args_list TOK_RP
+  111          | TOK_READ TOK_LP factor TOK_RP
+  112          | TOK_EXIT
+  113          | TOK_EXIT TOK_LP factor TOK_RP
+
+  114 SYS_PROC: TOK_WRITE
+  115         | TOK_WRITELN
+
+  116 if_stmt: TOK_IF expression TOK_THEN stmt else_clause
+
+  117 else_clause: TOK_ELSE stmt
+  118            | %empty
+
+  119 repeat_stmt: TOK_REPEAT stmt_list TOK_UNTIL expression
+
+  120 while_stmt: TOK_WHILE expression TOK_DO stmt
+
+  121 for_stmt: TOK_FOR NAME TOK_ASSIGN expression direction expression TOK_DO stmt
+
+  122 direction: TOK_TO
+  123          | TOK_DOWNTO
+
+  124 case_stmt: TOK_CASE expression TOK_OF case_expr_list TOK_END
+
+  125 case_expr_list: case_expr_list case_expr
+  126               | case_expr
+
+  127 case_expr: const_value TOK_COLON stmt TOK_SEMI
+  128          | NAME TOK_COLON stmt TOK_SEMI
+
+  129 $@9: %empty
+
+  130 case_expr: error $@9 TOK_SEMI
+
+  131 goto_stmt: TOK_GOTO CONST_INTEGER
+
+  132 expression_list: expression_list TOK_COMMA expression
+  133                | expression
+
+  134 expression: expression TOK_GE expr
+  135           | expression TOK_GT expr
+  136           | expression TOK_LE expr
+  137           | expression TOK_LT expr
+  138           | expression TOK_EQUAL expr
+  139           | expression TOK_UNEQUAL expr
+  140           | expr
+
+  141 expr: expr TOK_PLUS term
+  142     | expr TOK_MINUS term
+  143     | expr TOK_OR term
+  144     | expr TOK_XOR term
+  145     | term
+
+  146 term: term TOK_MUL factor
+  147     | term TOK_DIV factor
+  148     | term TOK_MOD factor
+  149     | term TOK_AND factor
+  150     | term TOK_SHL factor
+  151     | term TOK_SHR factor
+  152     | factor
+
+  153 factor: NAME
+  154       | NAME TOK_LP args_list TOK_RP
+  155       | NAME TOK_LB expression_list TOK_RB
+  156       | SYS_FUNCT
+  157       | SYS_FUNCT TOK_LP args_list TOK_RP
+  158       | const_value
+  159       | TOK_LP expression TOK_RP
+  160       | TOK_NOT factor
+  161       | TOK_MINUS factor
+  162       | NAME TOK_LB expression TOK_RB
+  163       | NAME TOK_DOT NAME
+
+  164 SYS_FUNCT: TOK_ABS
+  165          | TOK_CHR
+  166          | TOK_ODD
+  167          | TOK_ORD
+  168          | TOK_PRED
+  169          | TOK_SQR
+  170          | TOK_SQRT
+  171          | TOK_SUCC
+
+  172 args_list: args_list TOK_COMMA expression
+  173          | expression
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256) 4 14 21 35 57 66 72 83 103 130
+TOK_LP (258) 41 79 108 110 111 113 154 157 159
+TOK_RP (259) 41 79 108 110 111 113 154 157 159
+TOK_LB (260) 51 105 155 162
+TOK_RB (261) 51 105 155 162
+TOK_DOT (262) 1 42 43 44 45 106 163
+TOK_COMMA (263) 58 132 172
+TOK_SEMI (264) 2 4 12 14 19 21 33 35 55 57 64 66 73 76 81 83 90 127
+    128 130
+TOK_COLON (265) 55 64 75 84 85 92 127 128
+TOK_MUL (266) 146
+TOK_DIV (267) 147
+TOK_PLUS (268) 141
+TOK_MINUS (269) 43 44 142 161
+TOK_GE (270) 134
+TOK_GT (271) 135
+TOK_LE (272) 136
+TOK_LT (273) 137
+TOK_EQUAL (274) 19 33 138
+TOK_UNEQUAL (275) 139
+TOK_ASSIGN (276) 104 105 106 121
+TOK_PROGRAM (277) 2
+TOK_PROCEDURE (278) 78
+TOK_FUNCTION (279) 75
+TOK_EXIT (280) 112 113
+TOK_LABEL (281) 12
+TOK_CONST (282) 15
+TOK_TYPE (283) 29
+TOK_VAR (284) 60 86
+TOK_ARRAY (285) 51
+TOK_RECORD (286) 52
+TOK_INTEGER (287) 48
+TOK_REAL (288) 49
+TOK_CHAR (289) 47
+TOK_STRING (290) 50
+TOK_BOOLEAN (291) 46
+TOK_BEGIN (292) 89
+TOK_END (293) 52 89 124
+TOK_IF (294) 116
+TOK_THEN (295) 116
+TOK_ELSE (296) 117
+TOK_FOR (297) 121
+TOK_TO (298) 122
+TOK_DOWNTO (299) 123
+TOK_DO (300) 120 121
+TOK_CASE (301) 124
+TOK_OF (302) 51 124
+TOK_WHILE (303) 120
+TOK_REPEAT (304) 119
+TOK_UNTIL (305) 119
+TOK_GOTO (306) 131
+TOK_OR (307) 143
+TOK_AND (308) 149
+TOK_XOR (309) 144
+TOK_NOT (310) 160
+TOK_MOD (311) 148
+TOK_SHL (312) 150
+TOK_SHR (313) 151
+TOK_WRITELN (314) 115
+TOK_WRITE (315) 114
+TOK_MAXINT (316) 27
+TOK_READ (317) 111
+TOK_READLN (318)
+TOK_ABS (319) 164
+TOK_CHR (320) 165
+TOK_ODD (321) 166
+TOK_ORD (322) 167
+TOK_PRED (323) 168
+TOK_SQR (324) 169
+TOK_SQRT (325) 170
+TOK_SUCC (326) 171
+NAME (327) 2 19 33 40 45 58 59 75 78 104 105 106 107 108 121 128 153
+    154 155 162 163
+CONST_INTEGER (328) 12 22 92 131
+CONST_REAL (329) 23
+CONST_CHAR (330) 24
+CONST_STRING (331) 25
+CONST_BOOLEAN (332) 28
+
+
+Nonterminals, with rules where they appear
+
+$accept (78)
+    on left: 0
+program (79)
+    on left: 1, on right: 0
+program_head (80)
+    on left: 2 4, on right: 1
+$@1 (81)
+    on left: 3, on right: 4
+routine (82)
+    on left: 5, on right: 1
+sub_routine (83)
+    on left: 6, on right: 73 76
+routine_head (84)
+    on left: 7, on right: 5 6
+label_part (85)
+    on left: 8 9, on right: 7
+label_list (86)
+    on left: 10 11, on right: 8 10
+single_label (87)
+    on left: 12 14, on right: 10 11
+$@2 (88)
+    on left: 13, on right: 14
+const_part (89)
+    on left: 15 16, on right: 7
+const_expr_list (90)
+    on left: 17 18, on right: 15 17
+const_expr (91)
+    on left: 19 21, on right: 17 18
+$@3 (92)
+    on left: 20, on right: 21
+const_value (93)
+    on left: 22 23 24 25 26, on right: 19 42 43 44 127 158
+SYS_CON (94)
+    on left: 27 28, on right: 26
+type_part (95)
+    on left: 29 30, on right: 7
+type_decl_list (96)
+    on left: 31 32, on right: 29 31
+type_definition (97)
+    on left: 33 35, on right: 31 32
+$@4 (98)
+    on left: 34, on right: 35
+type_decl (99)
+    on left: 36 37 38, on right: 33 51 55 64
+simple_type_decl (100)
+    on left: 39 40 41 42 43 44 45, on right: 36 51 75 84 85
+SYS_TYPE (101)
+    on left: 46 47 48 49 50, on right: 39
+array_type_decl (102)
+    on left: 51, on right: 37
+record_type_decl (103)
+    on left: 52, on right: 38
+field_decl_list (104)
+    on left: 53 54, on right: 52 53
+field_decl (105)
+    on left: 55 57, on right: 53 54
+$@5 (106)
+    on left: 56, on right: 57
+name_list (107)
+    on left: 58 59, on right: 41 55 58 64 86 87
+var_part (108)
+    on left: 60 61, on right: 7
+var_decl_list (109)
+    on left: 62 63, on right: 60 62
+var_decl (110)
+    on left: 64 66, on right: 62 63
+$@6 (111)
+    on left: 65, on right: 66
+routine_part (112)
+    on left: 67 68 69 70 71 72, on right: 7 67 68 72
+function_decl (113)
+    on left: 73, on right: 67 69
+function_head (114)
+    on left: 75, on right: 73
+$@7 (115)
+    on left: 74, on right: 75
+procedure_decl (116)
+    on left: 76, on right: 68 70
+procedure_head (117)
+    on left: 78, on right: 76
+$@8 (118)
+    on left: 77, on right: 78
+parameters (119)
+    on left: 79 80, on right: 75 78
+para_decl_list (120)
+    on left: 81 82 83, on right: 79 81 83
+para_type_list (121)
+    on left: 84 85, on right: 81 82
+var_para_list (122)
+    on left: 86, on right: 84
+val_para_list (123)
+    on left: 87, on right: 85
+routine_body (124)
+    on left: 88, on right: 5 6
+compound_stmt (125)
+    on left: 89, on right: 88 96
+stmt_list (126)
+    on left: 90 91, on right: 89 90 119
+stmt (127)
+    on left: 92 93, on right: 90 116 117 120 121 127 128
+non_label_stmt (128)
+    on left: 94 95 96 97 98 99 100 101 102 103, on right: 92 93
+assign_stmt (129)
+    on left: 104 105 106, on right: 94
+proc_stmt (130)
+    on left: 107 108 109 110 111 112 113, on right: 95
+SYS_PROC (131)
+    on left: 114 115, on right: 109 110
+if_stmt (132)
+    on left: 116, on right: 97
+else_clause (133)
+    on left: 117 118, on right: 116
+repeat_stmt (134)
+    on left: 119, on right: 98
+while_stmt (135)
+    on left: 120, on right: 99
+for_stmt (136)
+    on left: 121, on right: 100
+direction (137)
+    on left: 122 123, on right: 121
+case_stmt (138)
+    on left: 124, on right: 101
+case_expr_list (139)
+    on left: 125 126, on right: 124 125
+case_expr (140)
+    on left: 127 128 130, on right: 125 126
+$@9 (141)
+    on left: 129, on right: 130
+goto_stmt (142)
+    on left: 131, on right: 102
+expression_list (143)
+    on left: 132 133, on right: 105 132 155
+expression (144)
+    on left: 134 135 136 137 138 139 140, on right: 104 105 106 116
+    119 120 121 124 132 133 134 135 136 137 138 139 159 162 172 173
+expr (145)
+    on left: 141 142 143 144 145, on right: 134 135 136 137 138 139
+    140 141 142 143 144
+term (146)
+    on left: 146 147 148 149 150 151 152, on right: 141 142 143 144
+    145 146 147 148 149 150 151
+factor (147)
+    on left: 153 154 155 156 157 158 159 160 161 162 163, on right:
+    111 113 146 147 148 149 150 151 152 160 161
+SYS_FUNCT (148)
+    on left: 164 165 166 167 168 169 170 171, on right: 156 157
+args_list (149)
+    on left: 172 173, on right: 108 110 154 157 172
+
+
+State 0
+
+    0 $accept: . program $end
+
+    error        shift, and go to state 1
+    TOK_PROGRAM  shift, and go to state 2
+
+    program       go to state 3
+    program_head  go to state 4
+
+
+State 1
+
+    4 program_head: error . $@1 TOK_SEMI
+
+    $default  reduce using rule 3 ($@1)
+
+    $@1  go to state 5
+
+
+State 2
+
+    2 program_head: TOK_PROGRAM . NAME TOK_SEMI
+
+    NAME  shift, and go to state 6
+
+
+State 3
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 7
+
+
+State 4
+
+    1 program: program_head . routine TOK_DOT
+
+    error      shift, and go to state 8
+    TOK_LABEL  shift, and go to state 9
+
+    error          [reduce using rule 9 (label_part)]
+    TOK_PROCEDURE  reduce using rule 9 (label_part)
+    TOK_FUNCTION   reduce using rule 9 (label_part)
+    TOK_CONST      reduce using rule 9 (label_part)
+    TOK_TYPE       reduce using rule 9 (label_part)
+    TOK_VAR        reduce using rule 9 (label_part)
+    TOK_BEGIN      reduce using rule 9 (label_part)
+
+    routine       go to state 10
+    routine_head  go to state 11
+    label_part    go to state 12
+    label_list    go to state 13
+    single_label  go to state 14
+
+
+State 5
+
+    4 program_head: error $@1 . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 15
+
+
+State 6
+
+    2 program_head: TOK_PROGRAM NAME . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 16
+
+
+State 7
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+State 8
+
+   14 single_label: error . $@2 TOK_SEMI
+
+    $default  reduce using rule 13 ($@2)
+
+    $@2  go to state 17
+
+
+State 9
+
+   12 single_label: TOK_LABEL . CONST_INTEGER TOK_SEMI
+
+    CONST_INTEGER  shift, and go to state 18
+
+
+State 10
+
+    1 program: program_head routine . TOK_DOT
+
+    TOK_DOT  shift, and go to state 19
+
+
+State 11
+
+    5 routine: routine_head . routine_body
+
+    TOK_BEGIN  shift, and go to state 20
+
+    routine_body   go to state 21
+    compound_stmt  go to state 22
+
+
+State 12
+
+    7 routine_head: label_part . const_part type_part var_part routine_part
+
+    TOK_CONST  shift, and go to state 23
+
+    $default  reduce using rule 16 (const_part)
+
+    const_part  go to state 24
+
+
+State 13
+
+    8 label_part: label_list .
+   10 label_list: label_list . single_label
+
+    error      shift, and go to state 8
+    TOK_LABEL  shift, and go to state 9
+
+    error          [reduce using rule 8 (label_part)]
+    TOK_PROCEDURE  reduce using rule 8 (label_part)
+    TOK_FUNCTION   reduce using rule 8 (label_part)
+    TOK_CONST      reduce using rule 8 (label_part)
+    TOK_TYPE       reduce using rule 8 (label_part)
+    TOK_VAR        reduce using rule 8 (label_part)
+    TOK_BEGIN      reduce using rule 8 (label_part)
+
+    single_label  go to state 25
+
+
+State 14
+
+   11 label_list: single_label .
+
+    $default  reduce using rule 11 (label_list)
+
+
+State 15
+
+    4 program_head: error $@1 TOK_SEMI .
+
+    $default  reduce using rule 4 (program_head)
+
+
+State 16
+
+    2 program_head: TOK_PROGRAM NAME TOK_SEMI .
+
+    $default  reduce using rule 2 (program_head)
+
+
+State 17
+
+   14 single_label: error $@2 . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 26
+
+
+State 18
+
+   12 single_label: TOK_LABEL CONST_INTEGER . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 27
+
+
+State 19
+
+    1 program: program_head routine TOK_DOT .
+
+    $default  reduce using rule 1 (program)
+
+
+State 20
+
+   89 compound_stmt: TOK_BEGIN . stmt_list TOK_END
+
+    $default  reduce using rule 91 (stmt_list)
+
+    stmt_list  go to state 28
+
+
+State 21
+
+    5 routine: routine_head routine_body .
+
+    $default  reduce using rule 5 (routine)
+
+
+State 22
+
+   88 routine_body: compound_stmt .
+
+    $default  reduce using rule 88 (routine_body)
+
+
+State 23
+
+   15 const_part: TOK_CONST . const_expr_list
+
+    error  shift, and go to state 29
+    NAME   shift, and go to state 30
+
+    const_expr_list  go to state 31
+    const_expr       go to state 32
+
+
+State 24
+
+    7 routine_head: label_part const_part . type_part var_part routine_part
+
+    TOK_TYPE  shift, and go to state 33
+
+    $default  reduce using rule 30 (type_part)
+
+    type_part  go to state 34
+
+
+State 25
+
+   10 label_list: label_list single_label .
+
+    $default  reduce using rule 10 (label_list)
+
+
+State 26
+
+   14 single_label: error $@2 TOK_SEMI .
+
+    $default  reduce using rule 14 (single_label)
+
+
+State 27
+
+   12 single_label: TOK_LABEL CONST_INTEGER TOK_SEMI .
+
+    $default  reduce using rule 12 (single_label)
+
+
+State 28
+
+   89 compound_stmt: TOK_BEGIN stmt_list . TOK_END
+   90 stmt_list: stmt_list . stmt TOK_SEMI
+
+    error          shift, and go to state 35
+    TOK_EXIT       shift, and go to state 36
+    TOK_BEGIN      shift, and go to state 20
+    TOK_END        shift, and go to state 37
+    TOK_IF         shift, and go to state 38
+    TOK_FOR        shift, and go to state 39
+    TOK_CASE       shift, and go to state 40
+    TOK_WHILE      shift, and go to state 41
+    TOK_REPEAT     shift, and go to state 42
+    TOK_GOTO       shift, and go to state 43
+    TOK_WRITELN    shift, and go to state 44
+    TOK_WRITE      shift, and go to state 45
+    TOK_READ       shift, and go to state 46
+    NAME           shift, and go to state 47
+    CONST_INTEGER  shift, and go to state 48
+
+    compound_stmt   go to state 49
+    stmt            go to state 50
+    non_label_stmt  go to state 51
+    assign_stmt     go to state 52
+    proc_stmt       go to state 53
+    SYS_PROC        go to state 54
+    if_stmt         go to state 55
+    repeat_stmt     go to state 56
+    while_stmt      go to state 57
+    for_stmt        go to state 58
+    case_stmt       go to state 59
+    goto_stmt       go to state 60
+
+
+State 29
+
+   21 const_expr: error . $@3 TOK_SEMI
+
+    $default  reduce using rule 20 ($@3)
+
+    $@3  go to state 61
+
+
+State 30
+
+   19 const_expr: NAME . TOK_EQUAL const_value TOK_SEMI
+
+    TOK_EQUAL  shift, and go to state 62
+
+
+State 31
+
+   15 const_part: TOK_CONST const_expr_list .
+   17 const_expr_list: const_expr_list . const_expr
+
+    error  shift, and go to state 29
+    NAME   shift, and go to state 30
+
+    error          [reduce using rule 15 (const_part)]
+    TOK_PROCEDURE  reduce using rule 15 (const_part)
+    TOK_FUNCTION   reduce using rule 15 (const_part)
+    TOK_TYPE       reduce using rule 15 (const_part)
+    TOK_VAR        reduce using rule 15 (const_part)
+    TOK_BEGIN      reduce using rule 15 (const_part)
+
+    const_expr  go to state 63
+
+
+State 32
+
+   18 const_expr_list: const_expr .
+
+    $default  reduce using rule 18 (const_expr_list)
+
+
+State 33
+
+   29 type_part: TOK_TYPE . type_decl_list
+
+    error  shift, and go to state 64
+    NAME   shift, and go to state 65
+
+    type_decl_list   go to state 66
+    type_definition  go to state 67
+
+
+State 34
+
+    7 routine_head: label_part const_part type_part . var_part routine_part
+
+    TOK_VAR  shift, and go to state 68
+
+    $default  reduce using rule 61 (var_part)
+
+    var_part  go to state 69
+
+
+State 35
+
+  103 non_label_stmt: error .
+
+    $default  reduce using rule 103 (non_label_stmt)
+
+
+State 36
+
+  112 proc_stmt: TOK_EXIT .
+  113          | TOK_EXIT . TOK_LP factor TOK_RP
+
+    TOK_LP  shift, and go to state 70
+
+    $default  reduce using rule 112 (proc_stmt)
+
+
+State 37
+
+   89 compound_stmt: TOK_BEGIN stmt_list TOK_END .
+
+    $default  reduce using rule 89 (compound_stmt)
+
+
+State 38
+
+  116 if_stmt: TOK_IF . expression TOK_THEN stmt else_clause
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expression   go to state 91
+    expr         go to state 92
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 39
+
+  121 for_stmt: TOK_FOR . NAME TOK_ASSIGN expression direction expression TOK_DO stmt
+
+    NAME  shift, and go to state 96
+
+
+State 40
+
+  124 case_stmt: TOK_CASE . expression TOK_OF case_expr_list TOK_END
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expression   go to state 97
+    expr         go to state 92
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 41
+
+  120 while_stmt: TOK_WHILE . expression TOK_DO stmt
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expression   go to state 98
+    expr         go to state 92
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 42
+
+  119 repeat_stmt: TOK_REPEAT . stmt_list TOK_UNTIL expression
+
+    $default  reduce using rule 91 (stmt_list)
+
+    stmt_list  go to state 99
+
+
+State 43
+
+  131 goto_stmt: TOK_GOTO . CONST_INTEGER
+
+    CONST_INTEGER  shift, and go to state 100
+
+
+State 44
+
+  115 SYS_PROC: TOK_WRITELN .
+
+    $default  reduce using rule 115 (SYS_PROC)
+
+
+State 45
+
+  114 SYS_PROC: TOK_WRITE .
+
+    $default  reduce using rule 114 (SYS_PROC)
+
+
+State 46
+
+  111 proc_stmt: TOK_READ . TOK_LP factor TOK_RP
+
+    TOK_LP  shift, and go to state 101
+
+
+State 47
+
+  104 assign_stmt: NAME . TOK_ASSIGN expression
+  105            | NAME . TOK_LB expression_list TOK_RB TOK_ASSIGN expression
+  106            | NAME . TOK_DOT NAME TOK_ASSIGN expression
+  107 proc_stmt: NAME .
+  108          | NAME . TOK_LP args_list TOK_RP
+
+    TOK_LP      shift, and go to state 102
+    TOK_LB      shift, and go to state 103
+    TOK_DOT     shift, and go to state 104
+    TOK_ASSIGN  shift, and go to state 105
+
+    $default  reduce using rule 107 (proc_stmt)
+
+
+State 48
+
+   92 stmt: CONST_INTEGER . TOK_COLON non_label_stmt
+
+    TOK_COLON  shift, and go to state 106
+
+
+State 49
+
+   96 non_label_stmt: compound_stmt .
+
+    $default  reduce using rule 96 (non_label_stmt)
+
+
+State 50
+
+   90 stmt_list: stmt_list stmt . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 107
+
+
+State 51
+
+   93 stmt: non_label_stmt .
+
+    $default  reduce using rule 93 (stmt)
+
+
+State 52
+
+   94 non_label_stmt: assign_stmt .
+
+    $default  reduce using rule 94 (non_label_stmt)
+
+
+State 53
+
+   95 non_label_stmt: proc_stmt .
+
+    $default  reduce using rule 95 (non_label_stmt)
+
+
+State 54
+
+  109 proc_stmt: SYS_PROC .
+  110          | SYS_PROC . TOK_LP args_list TOK_RP
+
+    TOK_LP  shift, and go to state 108
+
+    $default  reduce using rule 109 (proc_stmt)
+
+
+State 55
+
+   97 non_label_stmt: if_stmt .
+
+    $default  reduce using rule 97 (non_label_stmt)
+
+
+State 56
+
+   98 non_label_stmt: repeat_stmt .
+
+    $default  reduce using rule 98 (non_label_stmt)
+
+
+State 57
+
+   99 non_label_stmt: while_stmt .
+
+    $default  reduce using rule 99 (non_label_stmt)
+
+
+State 58
+
+  100 non_label_stmt: for_stmt .
+
+    $default  reduce using rule 100 (non_label_stmt)
+
+
+State 59
+
+  101 non_label_stmt: case_stmt .
+
+    $default  reduce using rule 101 (non_label_stmt)
+
+
+State 60
+
+  102 non_label_stmt: goto_stmt .
+
+    $default  reduce using rule 102 (non_label_stmt)
+
+
+State 61
+
+   21 const_expr: error $@3 . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 109
+
+
+State 62
+
+   19 const_expr: NAME TOK_EQUAL . const_value TOK_SEMI
+
+    TOK_MAXINT     shift, and go to state 74
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 110
+    SYS_CON      go to state 90
+
+
+State 63
+
+   17 const_expr_list: const_expr_list const_expr .
+
+    $default  reduce using rule 17 (const_expr_list)
+
+
+State 64
+
+   35 type_definition: error . $@4 TOK_SEMI
+
+    $default  reduce using rule 34 ($@4)
+
+    $@4  go to state 111
+
+
+State 65
+
+   33 type_definition: NAME . TOK_EQUAL type_decl TOK_SEMI
+
+    TOK_EQUAL  shift, and go to state 112
+
+
+State 66
+
+   29 type_part: TOK_TYPE type_decl_list .
+   31 type_decl_list: type_decl_list . type_definition
+
+    error  shift, and go to state 64
+    NAME   shift, and go to state 65
+
+    error          [reduce using rule 29 (type_part)]
+    TOK_PROCEDURE  reduce using rule 29 (type_part)
+    TOK_FUNCTION   reduce using rule 29 (type_part)
+    TOK_VAR        reduce using rule 29 (type_part)
+    TOK_BEGIN      reduce using rule 29 (type_part)
+
+    type_definition  go to state 113
+
+
+State 67
+
+   32 type_decl_list: type_definition .
+
+    $default  reduce using rule 32 (type_decl_list)
+
+
+State 68
+
+   60 var_part: TOK_VAR . var_decl_list
+
+    error  shift, and go to state 114
+    NAME   shift, and go to state 115
+
+    name_list      go to state 116
+    var_decl_list  go to state 117
+    var_decl       go to state 118
+
+
+State 69
+
+    7 routine_head: label_part const_part type_part var_part . routine_part
+
+    TOK_PROCEDURE  shift, and go to state 119
+    TOK_FUNCTION   shift, and go to state 120
+
+    TOK_PROCEDURE  [reduce using rule 71 (routine_part)]
+    TOK_FUNCTION   [reduce using rule 71 (routine_part)]
+    $default       reduce using rule 71 (routine_part)
+
+    routine_part    go to state 121
+    function_decl   go to state 122
+    function_head   go to state 123
+    procedure_decl  go to state 124
+    procedure_head  go to state 125
+
+
+State 70
+
+  113 proc_stmt: TOK_EXIT TOK_LP . factor TOK_RP
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    factor       go to state 126
+    SYS_FUNCT    go to state 95
+
+
+State 71
+
+  159 factor: TOK_LP . expression TOK_RP
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expression   go to state 127
+    expr         go to state 92
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 72
+
+  161 factor: TOK_MINUS . factor
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    factor       go to state 128
+    SYS_FUNCT    go to state 95
+
+
+State 73
+
+  160 factor: TOK_NOT . factor
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    factor       go to state 129
+    SYS_FUNCT    go to state 95
+
+
+State 74
+
+   27 SYS_CON: TOK_MAXINT .
+
+    $default  reduce using rule 27 (SYS_CON)
+
+
+State 75
+
+  164 SYS_FUNCT: TOK_ABS .
+
+    $default  reduce using rule 164 (SYS_FUNCT)
+
+
+State 76
+
+  165 SYS_FUNCT: TOK_CHR .
+
+    $default  reduce using rule 165 (SYS_FUNCT)
+
+
+State 77
+
+  166 SYS_FUNCT: TOK_ODD .
+
+    $default  reduce using rule 166 (SYS_FUNCT)
+
+
+State 78
+
+  167 SYS_FUNCT: TOK_ORD .
+
+    $default  reduce using rule 167 (SYS_FUNCT)
+
+
+State 79
+
+  168 SYS_FUNCT: TOK_PRED .
+
+    $default  reduce using rule 168 (SYS_FUNCT)
+
+
+State 80
+
+  169 SYS_FUNCT: TOK_SQR .
+
+    $default  reduce using rule 169 (SYS_FUNCT)
+
+
+State 81
+
+  170 SYS_FUNCT: TOK_SQRT .
+
+    $default  reduce using rule 170 (SYS_FUNCT)
+
+
+State 82
+
+  171 SYS_FUNCT: TOK_SUCC .
+
+    $default  reduce using rule 171 (SYS_FUNCT)
+
+
+State 83
+
+  153 factor: NAME .
+  154       | NAME . TOK_LP args_list TOK_RP
+  155       | NAME . TOK_LB expression_list TOK_RB
+  162       | NAME . TOK_LB expression TOK_RB
+  163       | NAME . TOK_DOT NAME
+
+    TOK_LP   shift, and go to state 130
+    TOK_LB   shift, and go to state 131
+    TOK_DOT  shift, and go to state 132
+
+    $default  reduce using rule 153 (factor)
+
+
+State 84
+
+   22 const_value: CONST_INTEGER .
+
+    $default  reduce using rule 22 (const_value)
+
+
+State 85
+
+   23 const_value: CONST_REAL .
+
+    $default  reduce using rule 23 (const_value)
+
+
+State 86
+
+   24 const_value: CONST_CHAR .
+
+    $default  reduce using rule 24 (const_value)
+
+
+State 87
+
+   25 const_value: CONST_STRING .
+
+    $default  reduce using rule 25 (const_value)
+
+
+State 88
+
+   28 SYS_CON: CONST_BOOLEAN .
+
+    $default  reduce using rule 28 (SYS_CON)
+
+
+State 89
+
+  158 factor: const_value .
+
+    $default  reduce using rule 158 (factor)
+
+
+State 90
+
+   26 const_value: SYS_CON .
+
+    $default  reduce using rule 26 (const_value)
+
+
+State 91
+
+  116 if_stmt: TOK_IF expression . TOK_THEN stmt else_clause
+  134 expression: expression . TOK_GE expr
+  135           | expression . TOK_GT expr
+  136           | expression . TOK_LE expr
+  137           | expression . TOK_LT expr
+  138           | expression . TOK_EQUAL expr
+  139           | expression . TOK_UNEQUAL expr
+
+    TOK_GE       shift, and go to state 133
+    TOK_GT       shift, and go to state 134
+    TOK_LE       shift, and go to state 135
+    TOK_LT       shift, and go to state 136
+    TOK_EQUAL    shift, and go to state 137
+    TOK_UNEQUAL  shift, and go to state 138
+    TOK_THEN     shift, and go to state 139
+
+
+State 92
+
+  140 expression: expr .
+  141 expr: expr . TOK_PLUS term
+  142     | expr . TOK_MINUS term
+  143     | expr . TOK_OR term
+  144     | expr . TOK_XOR term
+
+    TOK_PLUS   shift, and go to state 140
+    TOK_MINUS  shift, and go to state 141
+    TOK_OR     shift, and go to state 142
+    TOK_XOR    shift, and go to state 143
+
+    $default  reduce using rule 140 (expression)
+
+
+State 93
+
+  145 expr: term .
+  146 term: term . TOK_MUL factor
+  147     | term . TOK_DIV factor
+  148     | term . TOK_MOD factor
+  149     | term . TOK_AND factor
+  150     | term . TOK_SHL factor
+  151     | term . TOK_SHR factor
+
+    TOK_MUL  shift, and go to state 144
+    TOK_DIV  shift, and go to state 145
+    TOK_AND  shift, and go to state 146
+    TOK_MOD  shift, and go to state 147
+    TOK_SHL  shift, and go to state 148
+    TOK_SHR  shift, and go to state 149
+
+    $default  reduce using rule 145 (expr)
+
+
+State 94
+
+  152 term: factor .
+
+    $default  reduce using rule 152 (term)
+
+
+State 95
+
+  156 factor: SYS_FUNCT .
+  157       | SYS_FUNCT . TOK_LP args_list TOK_RP
+
+    TOK_LP  shift, and go to state 150
+
+    $default  reduce using rule 156 (factor)
+
+
+State 96
+
+  121 for_stmt: TOK_FOR NAME . TOK_ASSIGN expression direction expression TOK_DO stmt
+
+    TOK_ASSIGN  shift, and go to state 151
+
+
+State 97
+
+  124 case_stmt: TOK_CASE expression . TOK_OF case_expr_list TOK_END
+  134 expression: expression . TOK_GE expr
+  135           | expression . TOK_GT expr
+  136           | expression . TOK_LE expr
+  137           | expression . TOK_LT expr
+  138           | expression . TOK_EQUAL expr
+  139           | expression . TOK_UNEQUAL expr
+
+    TOK_GE       shift, and go to state 133
+    TOK_GT       shift, and go to state 134
+    TOK_LE       shift, and go to state 135
+    TOK_LT       shift, and go to state 136
+    TOK_EQUAL    shift, and go to state 137
+    TOK_UNEQUAL  shift, and go to state 138
+    TOK_OF       shift, and go to state 152
+
+
+State 98
+
+  120 while_stmt: TOK_WHILE expression . TOK_DO stmt
+  134 expression: expression . TOK_GE expr
+  135           | expression . TOK_GT expr
+  136           | expression . TOK_LE expr
+  137           | expression . TOK_LT expr
+  138           | expression . TOK_EQUAL expr
+  139           | expression . TOK_UNEQUAL expr
+
+    TOK_GE       shift, and go to state 133
+    TOK_GT       shift, and go to state 134
+    TOK_LE       shift, and go to state 135
+    TOK_LT       shift, and go to state 136
+    TOK_EQUAL    shift, and go to state 137
+    TOK_UNEQUAL  shift, and go to state 138
+    TOK_DO       shift, and go to state 153
+
+
+State 99
+
+   90 stmt_list: stmt_list . stmt TOK_SEMI
+  119 repeat_stmt: TOK_REPEAT stmt_list . TOK_UNTIL expression
+
+    error          shift, and go to state 35
+    TOK_EXIT       shift, and go to state 36
+    TOK_BEGIN      shift, and go to state 20
+    TOK_IF         shift, and go to state 38
+    TOK_FOR        shift, and go to state 39
+    TOK_CASE       shift, and go to state 40
+    TOK_WHILE      shift, and go to state 41
+    TOK_REPEAT     shift, and go to state 42
+    TOK_UNTIL      shift, and go to state 154
+    TOK_GOTO       shift, and go to state 43
+    TOK_WRITELN    shift, and go to state 44
+    TOK_WRITE      shift, and go to state 45
+    TOK_READ       shift, and go to state 46
+    NAME           shift, and go to state 47
+    CONST_INTEGER  shift, and go to state 48
+
+    compound_stmt   go to state 49
+    stmt            go to state 50
+    non_label_stmt  go to state 51
+    assign_stmt     go to state 52
+    proc_stmt       go to state 53
+    SYS_PROC        go to state 54
+    if_stmt         go to state 55
+    repeat_stmt     go to state 56
+    while_stmt      go to state 57
+    for_stmt        go to state 58
+    case_stmt       go to state 59
+    goto_stmt       go to state 60
+
+
+State 100
+
+  131 goto_stmt: TOK_GOTO CONST_INTEGER .
+
+    $default  reduce using rule 131 (goto_stmt)
+
+
+State 101
+
+  111 proc_stmt: TOK_READ TOK_LP . factor TOK_RP
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    factor       go to state 155
+    SYS_FUNCT    go to state 95
+
+
+State 102
+
+  108 proc_stmt: NAME TOK_LP . args_list TOK_RP
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expression   go to state 156
+    expr         go to state 92
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+    args_list    go to state 157
+
+
+State 103
+
+  105 assign_stmt: NAME TOK_LB . expression_list TOK_RB TOK_ASSIGN expression
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value      go to state 89
+    SYS_CON          go to state 90
+    expression_list  go to state 158
+    expression       go to state 159
+    expr             go to state 92
+    term             go to state 93
+    factor           go to state 94
+    SYS_FUNCT        go to state 95
+
+
+State 104
+
+  106 assign_stmt: NAME TOK_DOT . NAME TOK_ASSIGN expression
+
+    NAME  shift, and go to state 160
+
+
+State 105
+
+  104 assign_stmt: NAME TOK_ASSIGN . expression
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expression   go to state 161
+    expr         go to state 92
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 106
+
+   92 stmt: CONST_INTEGER TOK_COLON . non_label_stmt
+
+    error        shift, and go to state 35
+    TOK_EXIT     shift, and go to state 36
+    TOK_BEGIN    shift, and go to state 20
+    TOK_IF       shift, and go to state 38
+    TOK_FOR      shift, and go to state 39
+    TOK_CASE     shift, and go to state 40
+    TOK_WHILE    shift, and go to state 41
+    TOK_REPEAT   shift, and go to state 42
+    TOK_GOTO     shift, and go to state 43
+    TOK_WRITELN  shift, and go to state 44
+    TOK_WRITE    shift, and go to state 45
+    TOK_READ     shift, and go to state 46
+    NAME         shift, and go to state 47
+
+    compound_stmt   go to state 49
+    non_label_stmt  go to state 162
+    assign_stmt     go to state 52
+    proc_stmt       go to state 53
+    SYS_PROC        go to state 54
+    if_stmt         go to state 55
+    repeat_stmt     go to state 56
+    while_stmt      go to state 57
+    for_stmt        go to state 58
+    case_stmt       go to state 59
+    goto_stmt       go to state 60
+
+
+State 107
+
+   90 stmt_list: stmt_list stmt TOK_SEMI .
+
+    $default  reduce using rule 90 (stmt_list)
+
+
+State 108
+
+  110 proc_stmt: SYS_PROC TOK_LP . args_list TOK_RP
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expression   go to state 156
+    expr         go to state 92
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+    args_list    go to state 163
+
+
+State 109
+
+   21 const_expr: error $@3 TOK_SEMI .
+
+    $default  reduce using rule 21 (const_expr)
+
+
+State 110
+
+   19 const_expr: NAME TOK_EQUAL const_value . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 164
+
+
+State 111
+
+   35 type_definition: error $@4 . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 165
+
+
+State 112
+
+   33 type_definition: NAME TOK_EQUAL . type_decl TOK_SEMI
+
+    TOK_LP         shift, and go to state 166
+    TOK_MINUS      shift, and go to state 167
+    TOK_ARRAY      shift, and go to state 168
+    TOK_RECORD     shift, and go to state 169
+    TOK_INTEGER    shift, and go to state 170
+    TOK_REAL       shift, and go to state 171
+    TOK_CHAR       shift, and go to state 172
+    TOK_STRING     shift, and go to state 173
+    TOK_BOOLEAN    shift, and go to state 174
+    TOK_MAXINT     shift, and go to state 74
+    NAME           shift, and go to state 175
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value       go to state 176
+    SYS_CON           go to state 90
+    type_decl         go to state 177
+    simple_type_decl  go to state 178
+    SYS_TYPE          go to state 179
+    array_type_decl   go to state 180
+    record_type_decl  go to state 181
+
+
+State 113
+
+   31 type_decl_list: type_decl_list type_definition .
+
+    $default  reduce using rule 31 (type_decl_list)
+
+
+State 114
+
+   66 var_decl: error . $@6 TOK_SEMI
+
+    $default  reduce using rule 65 ($@6)
+
+    $@6  go to state 182
+
+
+State 115
+
+   59 name_list: NAME .
+
+    $default  reduce using rule 59 (name_list)
+
+
+State 116
+
+   58 name_list: name_list . TOK_COMMA NAME
+   64 var_decl: name_list . TOK_COLON type_decl TOK_SEMI
+
+    TOK_COMMA  shift, and go to state 183
+    TOK_COLON  shift, and go to state 184
+
+
+State 117
+
+   60 var_part: TOK_VAR var_decl_list .
+   62 var_decl_list: var_decl_list . var_decl
+
+    error  shift, and go to state 114
+    NAME   shift, and go to state 115
+
+    error          [reduce using rule 60 (var_part)]
+    TOK_PROCEDURE  reduce using rule 60 (var_part)
+    TOK_FUNCTION   reduce using rule 60 (var_part)
+    TOK_BEGIN      reduce using rule 60 (var_part)
+
+    name_list  go to state 116
+    var_decl   go to state 185
+
+
+State 118
+
+   63 var_decl_list: var_decl .
+
+    $default  reduce using rule 63 (var_decl_list)
+
+
+State 119
+
+   78 procedure_head: TOK_PROCEDURE . NAME $@8 parameters
+
+    NAME  shift, and go to state 186
+
+
+State 120
+
+   75 function_head: TOK_FUNCTION . NAME $@7 parameters TOK_COLON simple_type_decl
+
+    NAME  shift, and go to state 187
+
+
+State 121
+
+    7 routine_head: label_part const_part type_part var_part routine_part .
+   67 routine_part: routine_part . function_decl
+   68             | routine_part . procedure_decl
+   72             | routine_part . error
+
+    error          shift, and go to state 188
+    TOK_PROCEDURE  shift, and go to state 119
+    TOK_FUNCTION   shift, and go to state 120
+
+    TOK_BEGIN  reduce using rule 7 (routine_head)
+
+    function_decl   go to state 189
+    function_head   go to state 123
+    procedure_decl  go to state 190
+    procedure_head  go to state 125
+
+
+State 122
+
+   69 routine_part: function_decl .
+
+    $default  reduce using rule 69 (routine_part)
+
+
+State 123
+
+   73 function_decl: function_head . TOK_SEMI sub_routine TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 191
+
+
+State 124
+
+   70 routine_part: procedure_decl .
+
+    $default  reduce using rule 70 (routine_part)
+
+
+State 125
+
+   76 procedure_decl: procedure_head . TOK_SEMI sub_routine TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 192
+
+
+State 126
+
+  113 proc_stmt: TOK_EXIT TOK_LP factor . TOK_RP
+
+    TOK_RP  shift, and go to state 193
+
+
+State 127
+
+  134 expression: expression . TOK_GE expr
+  135           | expression . TOK_GT expr
+  136           | expression . TOK_LE expr
+  137           | expression . TOK_LT expr
+  138           | expression . TOK_EQUAL expr
+  139           | expression . TOK_UNEQUAL expr
+  159 factor: TOK_LP expression . TOK_RP
+
+    TOK_RP       shift, and go to state 194
+    TOK_GE       shift, and go to state 133
+    TOK_GT       shift, and go to state 134
+    TOK_LE       shift, and go to state 135
+    TOK_LT       shift, and go to state 136
+    TOK_EQUAL    shift, and go to state 137
+    TOK_UNEQUAL  shift, and go to state 138
+
+
+State 128
+
+  161 factor: TOK_MINUS factor .
+
+    $default  reduce using rule 161 (factor)
+
+
+State 129
+
+  160 factor: TOK_NOT factor .
+
+    $default  reduce using rule 160 (factor)
+
+
+State 130
+
+  154 factor: NAME TOK_LP . args_list TOK_RP
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expression   go to state 156
+    expr         go to state 92
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+    args_list    go to state 195
+
+
+State 131
+
+  155 factor: NAME TOK_LB . expression_list TOK_RB
+  162       | NAME TOK_LB . expression TOK_RB
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value      go to state 89
+    SYS_CON          go to state 90
+    expression_list  go to state 196
+    expression       go to state 197
+    expr             go to state 92
+    term             go to state 93
+    factor           go to state 94
+    SYS_FUNCT        go to state 95
+
+
+State 132
+
+  163 factor: NAME TOK_DOT . NAME
+
+    NAME  shift, and go to state 198
+
+
+State 133
+
+  134 expression: expression TOK_GE . expr
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expr         go to state 199
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 134
+
+  135 expression: expression TOK_GT . expr
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expr         go to state 200
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 135
+
+  136 expression: expression TOK_LE . expr
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expr         go to state 201
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 136
+
+  137 expression: expression TOK_LT . expr
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expr         go to state 202
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 137
+
+  138 expression: expression TOK_EQUAL . expr
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expr         go to state 203
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 138
+
+  139 expression: expression TOK_UNEQUAL . expr
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expr         go to state 204
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 139
+
+  116 if_stmt: TOK_IF expression TOK_THEN . stmt else_clause
+
+    error          shift, and go to state 35
+    TOK_EXIT       shift, and go to state 36
+    TOK_BEGIN      shift, and go to state 20
+    TOK_IF         shift, and go to state 38
+    TOK_FOR        shift, and go to state 39
+    TOK_CASE       shift, and go to state 40
+    TOK_WHILE      shift, and go to state 41
+    TOK_REPEAT     shift, and go to state 42
+    TOK_GOTO       shift, and go to state 43
+    TOK_WRITELN    shift, and go to state 44
+    TOK_WRITE      shift, and go to state 45
+    TOK_READ       shift, and go to state 46
+    NAME           shift, and go to state 47
+    CONST_INTEGER  shift, and go to state 48
+
+    compound_stmt   go to state 49
+    stmt            go to state 205
+    non_label_stmt  go to state 51
+    assign_stmt     go to state 52
+    proc_stmt       go to state 53
+    SYS_PROC        go to state 54
+    if_stmt         go to state 55
+    repeat_stmt     go to state 56
+    while_stmt      go to state 57
+    for_stmt        go to state 58
+    case_stmt       go to state 59
+    goto_stmt       go to state 60
+
+
+State 140
+
+  141 expr: expr TOK_PLUS . term
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    term         go to state 206
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 141
+
+  142 expr: expr TOK_MINUS . term
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    term         go to state 207
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 142
+
+  143 expr: expr TOK_OR . term
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    term         go to state 208
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 143
+
+  144 expr: expr TOK_XOR . term
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    term         go to state 209
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 144
+
+  146 term: term TOK_MUL . factor
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    factor       go to state 210
+    SYS_FUNCT    go to state 95
+
+
+State 145
+
+  147 term: term TOK_DIV . factor
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    factor       go to state 211
+    SYS_FUNCT    go to state 95
+
+
+State 146
+
+  149 term: term TOK_AND . factor
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    factor       go to state 212
+    SYS_FUNCT    go to state 95
+
+
+State 147
+
+  148 term: term TOK_MOD . factor
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    factor       go to state 213
+    SYS_FUNCT    go to state 95
+
+
+State 148
+
+  150 term: term TOK_SHL . factor
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    factor       go to state 214
+    SYS_FUNCT    go to state 95
+
+
+State 149
+
+  151 term: term TOK_SHR . factor
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    factor       go to state 215
+    SYS_FUNCT    go to state 95
+
+
+State 150
+
+  157 factor: SYS_FUNCT TOK_LP . args_list TOK_RP
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expression   go to state 156
+    expr         go to state 92
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+    args_list    go to state 216
+
+
+State 151
+
+  121 for_stmt: TOK_FOR NAME TOK_ASSIGN . expression direction expression TOK_DO stmt
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expression   go to state 217
+    expr         go to state 92
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 152
+
+  124 case_stmt: TOK_CASE expression TOK_OF . case_expr_list TOK_END
+
+    error          shift, and go to state 218
+    TOK_MAXINT     shift, and go to state 74
+    NAME           shift, and go to state 219
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value     go to state 220
+    SYS_CON         go to state 90
+    case_expr_list  go to state 221
+    case_expr       go to state 222
+
+
+State 153
+
+  120 while_stmt: TOK_WHILE expression TOK_DO . stmt
+
+    error          shift, and go to state 35
+    TOK_EXIT       shift, and go to state 36
+    TOK_BEGIN      shift, and go to state 20
+    TOK_IF         shift, and go to state 38
+    TOK_FOR        shift, and go to state 39
+    TOK_CASE       shift, and go to state 40
+    TOK_WHILE      shift, and go to state 41
+    TOK_REPEAT     shift, and go to state 42
+    TOK_GOTO       shift, and go to state 43
+    TOK_WRITELN    shift, and go to state 44
+    TOK_WRITE      shift, and go to state 45
+    TOK_READ       shift, and go to state 46
+    NAME           shift, and go to state 47
+    CONST_INTEGER  shift, and go to state 48
+
+    compound_stmt   go to state 49
+    stmt            go to state 223
+    non_label_stmt  go to state 51
+    assign_stmt     go to state 52
+    proc_stmt       go to state 53
+    SYS_PROC        go to state 54
+    if_stmt         go to state 55
+    repeat_stmt     go to state 56
+    while_stmt      go to state 57
+    for_stmt        go to state 58
+    case_stmt       go to state 59
+    goto_stmt       go to state 60
+
+
+State 154
+
+  119 repeat_stmt: TOK_REPEAT stmt_list TOK_UNTIL . expression
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expression   go to state 224
+    expr         go to state 92
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 155
+
+  111 proc_stmt: TOK_READ TOK_LP factor . TOK_RP
+
+    TOK_RP  shift, and go to state 225
+
+
+State 156
+
+  134 expression: expression . TOK_GE expr
+  135           | expression . TOK_GT expr
+  136           | expression . TOK_LE expr
+  137           | expression . TOK_LT expr
+  138           | expression . TOK_EQUAL expr
+  139           | expression . TOK_UNEQUAL expr
+  173 args_list: expression .
+
+    TOK_GE       shift, and go to state 133
+    TOK_GT       shift, and go to state 134
+    TOK_LE       shift, and go to state 135
+    TOK_LT       shift, and go to state 136
+    TOK_EQUAL    shift, and go to state 137
+    TOK_UNEQUAL  shift, and go to state 138
+
+    $default  reduce using rule 173 (args_list)
+
+
+State 157
+
+  108 proc_stmt: NAME TOK_LP args_list . TOK_RP
+  172 args_list: args_list . TOK_COMMA expression
+
+    TOK_RP     shift, and go to state 226
+    TOK_COMMA  shift, and go to state 227
+
+
+State 158
+
+  105 assign_stmt: NAME TOK_LB expression_list . TOK_RB TOK_ASSIGN expression
+  132 expression_list: expression_list . TOK_COMMA expression
+
+    TOK_RB     shift, and go to state 228
+    TOK_COMMA  shift, and go to state 229
+
+
+State 159
+
+  133 expression_list: expression .
+  134 expression: expression . TOK_GE expr
+  135           | expression . TOK_GT expr
+  136           | expression . TOK_LE expr
+  137           | expression . TOK_LT expr
+  138           | expression . TOK_EQUAL expr
+  139           | expression . TOK_UNEQUAL expr
+
+    TOK_GE       shift, and go to state 133
+    TOK_GT       shift, and go to state 134
+    TOK_LE       shift, and go to state 135
+    TOK_LT       shift, and go to state 136
+    TOK_EQUAL    shift, and go to state 137
+    TOK_UNEQUAL  shift, and go to state 138
+
+    $default  reduce using rule 133 (expression_list)
+
+
+State 160
+
+  106 assign_stmt: NAME TOK_DOT NAME . TOK_ASSIGN expression
+
+    TOK_ASSIGN  shift, and go to state 230
+
+
+State 161
+
+  104 assign_stmt: NAME TOK_ASSIGN expression .
+  134 expression: expression . TOK_GE expr
+  135           | expression . TOK_GT expr
+  136           | expression . TOK_LE expr
+  137           | expression . TOK_LT expr
+  138           | expression . TOK_EQUAL expr
+  139           | expression . TOK_UNEQUAL expr
+
+    TOK_GE       shift, and go to state 133
+    TOK_GT       shift, and go to state 134
+    TOK_LE       shift, and go to state 135
+    TOK_LT       shift, and go to state 136
+    TOK_EQUAL    shift, and go to state 137
+    TOK_UNEQUAL  shift, and go to state 138
+
+    $default  reduce using rule 104 (assign_stmt)
+
+
+State 162
+
+   92 stmt: CONST_INTEGER TOK_COLON non_label_stmt .
+
+    $default  reduce using rule 92 (stmt)
+
+
+State 163
+
+  110 proc_stmt: SYS_PROC TOK_LP args_list . TOK_RP
+  172 args_list: args_list . TOK_COMMA expression
+
+    TOK_RP     shift, and go to state 231
+    TOK_COMMA  shift, and go to state 227
+
+
+State 164
+
+   19 const_expr: NAME TOK_EQUAL const_value TOK_SEMI .
+
+    $default  reduce using rule 19 (const_expr)
+
+
+State 165
+
+   35 type_definition: error $@4 TOK_SEMI .
+
+    $default  reduce using rule 35 (type_definition)
+
+
+State 166
+
+   41 simple_type_decl: TOK_LP . name_list TOK_RP
+
+    NAME  shift, and go to state 115
+
+    name_list  go to state 232
+
+
+State 167
+
+   43 simple_type_decl: TOK_MINUS . const_value TOK_DOT TOK_DOT const_value
+   44                 | TOK_MINUS . const_value TOK_DOT TOK_DOT TOK_MINUS const_value
+
+    TOK_MAXINT     shift, and go to state 74
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 233
+    SYS_CON      go to state 90
+
+
+State 168
+
+   51 array_type_decl: TOK_ARRAY . TOK_LB simple_type_decl TOK_RB TOK_OF type_decl
+
+    TOK_LB  shift, and go to state 234
+
+
+State 169
+
+   52 record_type_decl: TOK_RECORD . field_decl_list TOK_END
+
+    error  shift, and go to state 235
+    NAME   shift, and go to state 115
+
+    field_decl_list  go to state 236
+    field_decl       go to state 237
+    name_list        go to state 238
+
+
+State 170
+
+   48 SYS_TYPE: TOK_INTEGER .
+
+    $default  reduce using rule 48 (SYS_TYPE)
+
+
+State 171
+
+   49 SYS_TYPE: TOK_REAL .
+
+    $default  reduce using rule 49 (SYS_TYPE)
+
+
+State 172
+
+   47 SYS_TYPE: TOK_CHAR .
+
+    $default  reduce using rule 47 (SYS_TYPE)
+
+
+State 173
+
+   50 SYS_TYPE: TOK_STRING .
+
+    $default  reduce using rule 50 (SYS_TYPE)
+
+
+State 174
+
+   46 SYS_TYPE: TOK_BOOLEAN .
+
+    $default  reduce using rule 46 (SYS_TYPE)
+
+
+State 175
+
+   40 simple_type_decl: NAME .
+   45                 | NAME . TOK_DOT TOK_DOT NAME
+
+    TOK_DOT  shift, and go to state 239
+
+    $default  reduce using rule 40 (simple_type_decl)
+
+
+State 176
+
+   42 simple_type_decl: const_value . TOK_DOT TOK_DOT const_value
+
+    TOK_DOT  shift, and go to state 240
+
+
+State 177
+
+   33 type_definition: NAME TOK_EQUAL type_decl . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 241
+
+
+State 178
+
+   36 type_decl: simple_type_decl .
+
+    $default  reduce using rule 36 (type_decl)
+
+
+State 179
+
+   39 simple_type_decl: SYS_TYPE .
+
+    $default  reduce using rule 39 (simple_type_decl)
+
+
+State 180
+
+   37 type_decl: array_type_decl .
+
+    $default  reduce using rule 37 (type_decl)
+
+
+State 181
+
+   38 type_decl: record_type_decl .
+
+    $default  reduce using rule 38 (type_decl)
+
+
+State 182
+
+   66 var_decl: error $@6 . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 242
+
+
+State 183
+
+   58 name_list: name_list TOK_COMMA . NAME
+
+    NAME  shift, and go to state 243
+
+
+State 184
+
+   64 var_decl: name_list TOK_COLON . type_decl TOK_SEMI
+
+    TOK_LP         shift, and go to state 166
+    TOK_MINUS      shift, and go to state 167
+    TOK_ARRAY      shift, and go to state 168
+    TOK_RECORD     shift, and go to state 169
+    TOK_INTEGER    shift, and go to state 170
+    TOK_REAL       shift, and go to state 171
+    TOK_CHAR       shift, and go to state 172
+    TOK_STRING     shift, and go to state 173
+    TOK_BOOLEAN    shift, and go to state 174
+    TOK_MAXINT     shift, and go to state 74
+    NAME           shift, and go to state 175
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value       go to state 176
+    SYS_CON           go to state 90
+    type_decl         go to state 244
+    simple_type_decl  go to state 178
+    SYS_TYPE          go to state 179
+    array_type_decl   go to state 180
+    record_type_decl  go to state 181
+
+
+State 185
+
+   62 var_decl_list: var_decl_list var_decl .
+
+    $default  reduce using rule 62 (var_decl_list)
+
+
+State 186
+
+   78 procedure_head: TOK_PROCEDURE NAME . $@8 parameters
+
+    $default  reduce using rule 77 ($@8)
+
+    $@8  go to state 245
+
+
+State 187
+
+   75 function_head: TOK_FUNCTION NAME . $@7 parameters TOK_COLON simple_type_decl
+
+    $default  reduce using rule 74 ($@7)
+
+    $@7  go to state 246
+
+
+State 188
+
+   72 routine_part: routine_part error .
+
+    $default  reduce using rule 72 (routine_part)
+
+
+State 189
+
+   67 routine_part: routine_part function_decl .
+
+    $default  reduce using rule 67 (routine_part)
+
+
+State 190
+
+   68 routine_part: routine_part procedure_decl .
+
+    $default  reduce using rule 68 (routine_part)
+
+
+State 191
+
+   73 function_decl: function_head TOK_SEMI . sub_routine TOK_SEMI
+
+    error      shift, and go to state 8
+    TOK_LABEL  shift, and go to state 9
+
+    error          [reduce using rule 9 (label_part)]
+    TOK_PROCEDURE  reduce using rule 9 (label_part)
+    TOK_FUNCTION   reduce using rule 9 (label_part)
+    TOK_CONST      reduce using rule 9 (label_part)
+    TOK_TYPE       reduce using rule 9 (label_part)
+    TOK_VAR        reduce using rule 9 (label_part)
+    TOK_BEGIN      reduce using rule 9 (label_part)
+
+    sub_routine   go to state 247
+    routine_head  go to state 248
+    label_part    go to state 12
+    label_list    go to state 13
+    single_label  go to state 14
+
+
+State 192
+
+   76 procedure_decl: procedure_head TOK_SEMI . sub_routine TOK_SEMI
+
+    error      shift, and go to state 8
+    TOK_LABEL  shift, and go to state 9
+
+    error          [reduce using rule 9 (label_part)]
+    TOK_PROCEDURE  reduce using rule 9 (label_part)
+    TOK_FUNCTION   reduce using rule 9 (label_part)
+    TOK_CONST      reduce using rule 9 (label_part)
+    TOK_TYPE       reduce using rule 9 (label_part)
+    TOK_VAR        reduce using rule 9 (label_part)
+    TOK_BEGIN      reduce using rule 9 (label_part)
+
+    sub_routine   go to state 249
+    routine_head  go to state 248
+    label_part    go to state 12
+    label_list    go to state 13
+    single_label  go to state 14
+
+
+State 193
+
+  113 proc_stmt: TOK_EXIT TOK_LP factor TOK_RP .
+
+    $default  reduce using rule 113 (proc_stmt)
+
+
+State 194
+
+  159 factor: TOK_LP expression TOK_RP .
+
+    $default  reduce using rule 159 (factor)
+
+
+State 195
+
+  154 factor: NAME TOK_LP args_list . TOK_RP
+  172 args_list: args_list . TOK_COMMA expression
+
+    TOK_RP     shift, and go to state 250
+    TOK_COMMA  shift, and go to state 227
+
+
+State 196
+
+  132 expression_list: expression_list . TOK_COMMA expression
+  155 factor: NAME TOK_LB expression_list . TOK_RB
+
+    TOK_RB     shift, and go to state 251
+    TOK_COMMA  shift, and go to state 229
+
+
+State 197
+
+  133 expression_list: expression .
+  134 expression: expression . TOK_GE expr
+  135           | expression . TOK_GT expr
+  136           | expression . TOK_LE expr
+  137           | expression . TOK_LT expr
+  138           | expression . TOK_EQUAL expr
+  139           | expression . TOK_UNEQUAL expr
+  162 factor: NAME TOK_LB expression . TOK_RB
+
+    TOK_RB       shift, and go to state 252
+    TOK_GE       shift, and go to state 133
+    TOK_GT       shift, and go to state 134
+    TOK_LE       shift, and go to state 135
+    TOK_LT       shift, and go to state 136
+    TOK_EQUAL    shift, and go to state 137
+    TOK_UNEQUAL  shift, and go to state 138
+
+    TOK_RB    [reduce using rule 133 (expression_list)]
+    $default  reduce using rule 133 (expression_list)
+
+
+State 198
+
+  163 factor: NAME TOK_DOT NAME .
+
+    $default  reduce using rule 163 (factor)
+
+
+State 199
+
+  134 expression: expression TOK_GE expr .
+  141 expr: expr . TOK_PLUS term
+  142     | expr . TOK_MINUS term
+  143     | expr . TOK_OR term
+  144     | expr . TOK_XOR term
+
+    TOK_PLUS   shift, and go to state 140
+    TOK_MINUS  shift, and go to state 141
+    TOK_OR     shift, and go to state 142
+    TOK_XOR    shift, and go to state 143
+
+    $default  reduce using rule 134 (expression)
+
+
+State 200
+
+  135 expression: expression TOK_GT expr .
+  141 expr: expr . TOK_PLUS term
+  142     | expr . TOK_MINUS term
+  143     | expr . TOK_OR term
+  144     | expr . TOK_XOR term
+
+    TOK_PLUS   shift, and go to state 140
+    TOK_MINUS  shift, and go to state 141
+    TOK_OR     shift, and go to state 142
+    TOK_XOR    shift, and go to state 143
+
+    $default  reduce using rule 135 (expression)
+
+
+State 201
+
+  136 expression: expression TOK_LE expr .
+  141 expr: expr . TOK_PLUS term
+  142     | expr . TOK_MINUS term
+  143     | expr . TOK_OR term
+  144     | expr . TOK_XOR term
+
+    TOK_PLUS   shift, and go to state 140
+    TOK_MINUS  shift, and go to state 141
+    TOK_OR     shift, and go to state 142
+    TOK_XOR    shift, and go to state 143
+
+    $default  reduce using rule 136 (expression)
+
+
+State 202
+
+  137 expression: expression TOK_LT expr .
+  141 expr: expr . TOK_PLUS term
+  142     | expr . TOK_MINUS term
+  143     | expr . TOK_OR term
+  144     | expr . TOK_XOR term
+
+    TOK_PLUS   shift, and go to state 140
+    TOK_MINUS  shift, and go to state 141
+    TOK_OR     shift, and go to state 142
+    TOK_XOR    shift, and go to state 143
+
+    $default  reduce using rule 137 (expression)
+
+
+State 203
+
+  138 expression: expression TOK_EQUAL expr .
+  141 expr: expr . TOK_PLUS term
+  142     | expr . TOK_MINUS term
+  143     | expr . TOK_OR term
+  144     | expr . TOK_XOR term
+
+    TOK_PLUS   shift, and go to state 140
+    TOK_MINUS  shift, and go to state 141
+    TOK_OR     shift, and go to state 142
+    TOK_XOR    shift, and go to state 143
+
+    $default  reduce using rule 138 (expression)
+
+
+State 204
+
+  139 expression: expression TOK_UNEQUAL expr .
+  141 expr: expr . TOK_PLUS term
+  142     | expr . TOK_MINUS term
+  143     | expr . TOK_OR term
+  144     | expr . TOK_XOR term
+
+    TOK_PLUS   shift, and go to state 140
+    TOK_MINUS  shift, and go to state 141
+    TOK_OR     shift, and go to state 142
+    TOK_XOR    shift, and go to state 143
+
+    $default  reduce using rule 139 (expression)
+
+
+State 205
+
+  116 if_stmt: TOK_IF expression TOK_THEN stmt . else_clause
+
+    TOK_ELSE  shift, and go to state 253
+
+    TOK_ELSE  [reduce using rule 118 (else_clause)]
+    $default  reduce using rule 118 (else_clause)
+
+    else_clause  go to state 254
+
+
+State 206
+
+  141 expr: expr TOK_PLUS term .
+  146 term: term . TOK_MUL factor
+  147     | term . TOK_DIV factor
+  148     | term . TOK_MOD factor
+  149     | term . TOK_AND factor
+  150     | term . TOK_SHL factor
+  151     | term . TOK_SHR factor
+
+    TOK_MUL  shift, and go to state 144
+    TOK_DIV  shift, and go to state 145
+    TOK_AND  shift, and go to state 146
+    TOK_MOD  shift, and go to state 147
+    TOK_SHL  shift, and go to state 148
+    TOK_SHR  shift, and go to state 149
+
+    $default  reduce using rule 141 (expr)
+
+
+State 207
+
+  142 expr: expr TOK_MINUS term .
+  146 term: term . TOK_MUL factor
+  147     | term . TOK_DIV factor
+  148     | term . TOK_MOD factor
+  149     | term . TOK_AND factor
+  150     | term . TOK_SHL factor
+  151     | term . TOK_SHR factor
+
+    TOK_MUL  shift, and go to state 144
+    TOK_DIV  shift, and go to state 145
+    TOK_AND  shift, and go to state 146
+    TOK_MOD  shift, and go to state 147
+    TOK_SHL  shift, and go to state 148
+    TOK_SHR  shift, and go to state 149
+
+    $default  reduce using rule 142 (expr)
+
+
+State 208
+
+  143 expr: expr TOK_OR term .
+  146 term: term . TOK_MUL factor
+  147     | term . TOK_DIV factor
+  148     | term . TOK_MOD factor
+  149     | term . TOK_AND factor
+  150     | term . TOK_SHL factor
+  151     | term . TOK_SHR factor
+
+    TOK_MUL  shift, and go to state 144
+    TOK_DIV  shift, and go to state 145
+    TOK_AND  shift, and go to state 146
+    TOK_MOD  shift, and go to state 147
+    TOK_SHL  shift, and go to state 148
+    TOK_SHR  shift, and go to state 149
+
+    $default  reduce using rule 143 (expr)
+
+
+State 209
+
+  144 expr: expr TOK_XOR term .
+  146 term: term . TOK_MUL factor
+  147     | term . TOK_DIV factor
+  148     | term . TOK_MOD factor
+  149     | term . TOK_AND factor
+  150     | term . TOK_SHL factor
+  151     | term . TOK_SHR factor
+
+    TOK_MUL  shift, and go to state 144
+    TOK_DIV  shift, and go to state 145
+    TOK_AND  shift, and go to state 146
+    TOK_MOD  shift, and go to state 147
+    TOK_SHL  shift, and go to state 148
+    TOK_SHR  shift, and go to state 149
+
+    $default  reduce using rule 144 (expr)
+
+
+State 210
+
+  146 term: term TOK_MUL factor .
+
+    $default  reduce using rule 146 (term)
+
+
+State 211
+
+  147 term: term TOK_DIV factor .
+
+    $default  reduce using rule 147 (term)
+
+
+State 212
+
+  149 term: term TOK_AND factor .
+
+    $default  reduce using rule 149 (term)
+
+
+State 213
+
+  148 term: term TOK_MOD factor .
+
+    $default  reduce using rule 148 (term)
+
+
+State 214
+
+  150 term: term TOK_SHL factor .
+
+    $default  reduce using rule 150 (term)
+
+
+State 215
+
+  151 term: term TOK_SHR factor .
+
+    $default  reduce using rule 151 (term)
+
+
+State 216
+
+  157 factor: SYS_FUNCT TOK_LP args_list . TOK_RP
+  172 args_list: args_list . TOK_COMMA expression
+
+    TOK_RP     shift, and go to state 255
+    TOK_COMMA  shift, and go to state 227
+
+
+State 217
+
+  121 for_stmt: TOK_FOR NAME TOK_ASSIGN expression . direction expression TOK_DO stmt
+  134 expression: expression . TOK_GE expr
+  135           | expression . TOK_GT expr
+  136           | expression . TOK_LE expr
+  137           | expression . TOK_LT expr
+  138           | expression . TOK_EQUAL expr
+  139           | expression . TOK_UNEQUAL expr
+
+    TOK_GE       shift, and go to state 133
+    TOK_GT       shift, and go to state 134
+    TOK_LE       shift, and go to state 135
+    TOK_LT       shift, and go to state 136
+    TOK_EQUAL    shift, and go to state 137
+    TOK_UNEQUAL  shift, and go to state 138
+    TOK_TO       shift, and go to state 256
+    TOK_DOWNTO   shift, and go to state 257
+
+    direction  go to state 258
+
+
+State 218
+
+  130 case_expr: error . $@9 TOK_SEMI
+
+    $default  reduce using rule 129 ($@9)
+
+    $@9  go to state 259
+
+
+State 219
+
+  128 case_expr: NAME . TOK_COLON stmt TOK_SEMI
+
+    TOK_COLON  shift, and go to state 260
+
+
+State 220
+
+  127 case_expr: const_value . TOK_COLON stmt TOK_SEMI
+
+    TOK_COLON  shift, and go to state 261
+
+
+State 221
+
+  124 case_stmt: TOK_CASE expression TOK_OF case_expr_list . TOK_END
+  125 case_expr_list: case_expr_list . case_expr
+
+    error          shift, and go to state 218
+    TOK_END        shift, and go to state 262
+    TOK_MAXINT     shift, and go to state 74
+    NAME           shift, and go to state 219
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 220
+    SYS_CON      go to state 90
+    case_expr    go to state 263
+
+
+State 222
+
+  126 case_expr_list: case_expr .
+
+    $default  reduce using rule 126 (case_expr_list)
+
+
+State 223
+
+  120 while_stmt: TOK_WHILE expression TOK_DO stmt .
+
+    $default  reduce using rule 120 (while_stmt)
+
+
+State 224
+
+  119 repeat_stmt: TOK_REPEAT stmt_list TOK_UNTIL expression .
+  134 expression: expression . TOK_GE expr
+  135           | expression . TOK_GT expr
+  136           | expression . TOK_LE expr
+  137           | expression . TOK_LT expr
+  138           | expression . TOK_EQUAL expr
+  139           | expression . TOK_UNEQUAL expr
+
+    TOK_GE       shift, and go to state 133
+    TOK_GT       shift, and go to state 134
+    TOK_LE       shift, and go to state 135
+    TOK_LT       shift, and go to state 136
+    TOK_EQUAL    shift, and go to state 137
+    TOK_UNEQUAL  shift, and go to state 138
+
+    $default  reduce using rule 119 (repeat_stmt)
+
+
+State 225
+
+  111 proc_stmt: TOK_READ TOK_LP factor TOK_RP .
+
+    $default  reduce using rule 111 (proc_stmt)
+
+
+State 226
+
+  108 proc_stmt: NAME TOK_LP args_list TOK_RP .
+
+    $default  reduce using rule 108 (proc_stmt)
+
+
+State 227
+
+  172 args_list: args_list TOK_COMMA . expression
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expression   go to state 264
+    expr         go to state 92
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 228
+
+  105 assign_stmt: NAME TOK_LB expression_list TOK_RB . TOK_ASSIGN expression
+
+    TOK_ASSIGN  shift, and go to state 265
+
+
+State 229
+
+  132 expression_list: expression_list TOK_COMMA . expression
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expression   go to state 266
+    expr         go to state 92
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 230
+
+  106 assign_stmt: NAME TOK_DOT NAME TOK_ASSIGN . expression
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expression   go to state 267
+    expr         go to state 92
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 231
+
+  110 proc_stmt: SYS_PROC TOK_LP args_list TOK_RP .
+
+    $default  reduce using rule 110 (proc_stmt)
+
+
+State 232
+
+   41 simple_type_decl: TOK_LP name_list . TOK_RP
+   58 name_list: name_list . TOK_COMMA NAME
+
+    TOK_RP     shift, and go to state 268
+    TOK_COMMA  shift, and go to state 183
+
+
+State 233
+
+   43 simple_type_decl: TOK_MINUS const_value . TOK_DOT TOK_DOT const_value
+   44                 | TOK_MINUS const_value . TOK_DOT TOK_DOT TOK_MINUS const_value
+
+    TOK_DOT  shift, and go to state 269
+
+
+State 234
+
+   51 array_type_decl: TOK_ARRAY TOK_LB . simple_type_decl TOK_RB TOK_OF type_decl
+
+    TOK_LP         shift, and go to state 166
+    TOK_MINUS      shift, and go to state 167
+    TOK_INTEGER    shift, and go to state 170
+    TOK_REAL       shift, and go to state 171
+    TOK_CHAR       shift, and go to state 172
+    TOK_STRING     shift, and go to state 173
+    TOK_BOOLEAN    shift, and go to state 174
+    TOK_MAXINT     shift, and go to state 74
+    NAME           shift, and go to state 175
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value       go to state 176
+    SYS_CON           go to state 90
+    simple_type_decl  go to state 270
+    SYS_TYPE          go to state 179
+
+
+State 235
+
+   57 field_decl: error . $@5 TOK_SEMI
+
+    $default  reduce using rule 56 ($@5)
+
+    $@5  go to state 271
+
+
+State 236
+
+   52 record_type_decl: TOK_RECORD field_decl_list . TOK_END
+   53 field_decl_list: field_decl_list . field_decl
+
+    error    shift, and go to state 235
+    TOK_END  shift, and go to state 272
+    NAME     shift, and go to state 115
+
+    field_decl  go to state 273
+    name_list   go to state 238
+
+
+State 237
+
+   54 field_decl_list: field_decl .
+
+    $default  reduce using rule 54 (field_decl_list)
+
+
+State 238
+
+   55 field_decl: name_list . TOK_COLON type_decl TOK_SEMI
+   58 name_list: name_list . TOK_COMMA NAME
+
+    TOK_COMMA  shift, and go to state 183
+    TOK_COLON  shift, and go to state 274
+
+
+State 239
+
+   45 simple_type_decl: NAME TOK_DOT . TOK_DOT NAME
+
+    TOK_DOT  shift, and go to state 275
+
+
+State 240
+
+   42 simple_type_decl: const_value TOK_DOT . TOK_DOT const_value
+
+    TOK_DOT  shift, and go to state 276
+
+
+State 241
+
+   33 type_definition: NAME TOK_EQUAL type_decl TOK_SEMI .
+
+    $default  reduce using rule 33 (type_definition)
+
+
+State 242
+
+   66 var_decl: error $@6 TOK_SEMI .
+
+    $default  reduce using rule 66 (var_decl)
+
+
+State 243
+
+   58 name_list: name_list TOK_COMMA NAME .
+
+    $default  reduce using rule 58 (name_list)
+
+
+State 244
+
+   64 var_decl: name_list TOK_COLON type_decl . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 277
+
+
+State 245
+
+   78 procedure_head: TOK_PROCEDURE NAME $@8 . parameters
+
+    TOK_LP  shift, and go to state 278
+
+    $default  reduce using rule 80 (parameters)
+
+    parameters  go to state 279
+
+
+State 246
+
+   75 function_head: TOK_FUNCTION NAME $@7 . parameters TOK_COLON simple_type_decl
+
+    TOK_LP  shift, and go to state 278
+
+    $default  reduce using rule 80 (parameters)
+
+    parameters  go to state 280
+
+
+State 247
+
+   73 function_decl: function_head TOK_SEMI sub_routine . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 281
+
+
+State 248
+
+    6 sub_routine: routine_head . routine_body
+
+    TOK_BEGIN  shift, and go to state 20
+
+    routine_body   go to state 282
+    compound_stmt  go to state 22
+
+
+State 249
+
+   76 procedure_decl: procedure_head TOK_SEMI sub_routine . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 283
+
+
+State 250
+
+  154 factor: NAME TOK_LP args_list TOK_RP .
+
+    $default  reduce using rule 154 (factor)
+
+
+State 251
+
+  155 factor: NAME TOK_LB expression_list TOK_RB .
+
+    $default  reduce using rule 155 (factor)
+
+
+State 252
+
+  162 factor: NAME TOK_LB expression TOK_RB .
+
+    $default  reduce using rule 162 (factor)
+
+
+State 253
+
+  117 else_clause: TOK_ELSE . stmt
+
+    error          shift, and go to state 35
+    TOK_EXIT       shift, and go to state 36
+    TOK_BEGIN      shift, and go to state 20
+    TOK_IF         shift, and go to state 38
+    TOK_FOR        shift, and go to state 39
+    TOK_CASE       shift, and go to state 40
+    TOK_WHILE      shift, and go to state 41
+    TOK_REPEAT     shift, and go to state 42
+    TOK_GOTO       shift, and go to state 43
+    TOK_WRITELN    shift, and go to state 44
+    TOK_WRITE      shift, and go to state 45
+    TOK_READ       shift, and go to state 46
+    NAME           shift, and go to state 47
+    CONST_INTEGER  shift, and go to state 48
+
+    compound_stmt   go to state 49
+    stmt            go to state 284
+    non_label_stmt  go to state 51
+    assign_stmt     go to state 52
+    proc_stmt       go to state 53
+    SYS_PROC        go to state 54
+    if_stmt         go to state 55
+    repeat_stmt     go to state 56
+    while_stmt      go to state 57
+    for_stmt        go to state 58
+    case_stmt       go to state 59
+    goto_stmt       go to state 60
+
+
+State 254
+
+  116 if_stmt: TOK_IF expression TOK_THEN stmt else_clause .
+
+    $default  reduce using rule 116 (if_stmt)
+
+
+State 255
+
+  157 factor: SYS_FUNCT TOK_LP args_list TOK_RP .
+
+    $default  reduce using rule 157 (factor)
+
+
+State 256
+
+  122 direction: TOK_TO .
+
+    $default  reduce using rule 122 (direction)
+
+
+State 257
+
+  123 direction: TOK_DOWNTO .
+
+    $default  reduce using rule 123 (direction)
+
+
+State 258
+
+  121 for_stmt: TOK_FOR NAME TOK_ASSIGN expression direction . expression TOK_DO stmt
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expression   go to state 285
+    expr         go to state 92
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 259
+
+  130 case_expr: error $@9 . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 286
+
+
+State 260
+
+  128 case_expr: NAME TOK_COLON . stmt TOK_SEMI
+
+    error          shift, and go to state 35
+    TOK_EXIT       shift, and go to state 36
+    TOK_BEGIN      shift, and go to state 20
+    TOK_IF         shift, and go to state 38
+    TOK_FOR        shift, and go to state 39
+    TOK_CASE       shift, and go to state 40
+    TOK_WHILE      shift, and go to state 41
+    TOK_REPEAT     shift, and go to state 42
+    TOK_GOTO       shift, and go to state 43
+    TOK_WRITELN    shift, and go to state 44
+    TOK_WRITE      shift, and go to state 45
+    TOK_READ       shift, and go to state 46
+    NAME           shift, and go to state 47
+    CONST_INTEGER  shift, and go to state 48
+
+    compound_stmt   go to state 49
+    stmt            go to state 287
+    non_label_stmt  go to state 51
+    assign_stmt     go to state 52
+    proc_stmt       go to state 53
+    SYS_PROC        go to state 54
+    if_stmt         go to state 55
+    repeat_stmt     go to state 56
+    while_stmt      go to state 57
+    for_stmt        go to state 58
+    case_stmt       go to state 59
+    goto_stmt       go to state 60
+
+
+State 261
+
+  127 case_expr: const_value TOK_COLON . stmt TOK_SEMI
+
+    error          shift, and go to state 35
+    TOK_EXIT       shift, and go to state 36
+    TOK_BEGIN      shift, and go to state 20
+    TOK_IF         shift, and go to state 38
+    TOK_FOR        shift, and go to state 39
+    TOK_CASE       shift, and go to state 40
+    TOK_WHILE      shift, and go to state 41
+    TOK_REPEAT     shift, and go to state 42
+    TOK_GOTO       shift, and go to state 43
+    TOK_WRITELN    shift, and go to state 44
+    TOK_WRITE      shift, and go to state 45
+    TOK_READ       shift, and go to state 46
+    NAME           shift, and go to state 47
+    CONST_INTEGER  shift, and go to state 48
+
+    compound_stmt   go to state 49
+    stmt            go to state 288
+    non_label_stmt  go to state 51
+    assign_stmt     go to state 52
+    proc_stmt       go to state 53
+    SYS_PROC        go to state 54
+    if_stmt         go to state 55
+    repeat_stmt     go to state 56
+    while_stmt      go to state 57
+    for_stmt        go to state 58
+    case_stmt       go to state 59
+    goto_stmt       go to state 60
+
+
+State 262
+
+  124 case_stmt: TOK_CASE expression TOK_OF case_expr_list TOK_END .
+
+    $default  reduce using rule 124 (case_stmt)
+
+
+State 263
+
+  125 case_expr_list: case_expr_list case_expr .
+
+    $default  reduce using rule 125 (case_expr_list)
+
+
+State 264
+
+  134 expression: expression . TOK_GE expr
+  135           | expression . TOK_GT expr
+  136           | expression . TOK_LE expr
+  137           | expression . TOK_LT expr
+  138           | expression . TOK_EQUAL expr
+  139           | expression . TOK_UNEQUAL expr
+  172 args_list: args_list TOK_COMMA expression .
+
+    TOK_GE       shift, and go to state 133
+    TOK_GT       shift, and go to state 134
+    TOK_LE       shift, and go to state 135
+    TOK_LT       shift, and go to state 136
+    TOK_EQUAL    shift, and go to state 137
+    TOK_UNEQUAL  shift, and go to state 138
+
+    $default  reduce using rule 172 (args_list)
+
+
+State 265
+
+  105 assign_stmt: NAME TOK_LB expression_list TOK_RB TOK_ASSIGN . expression
+
+    TOK_LP         shift, and go to state 71
+    TOK_MINUS      shift, and go to state 72
+    TOK_NOT        shift, and go to state 73
+    TOK_MAXINT     shift, and go to state 74
+    TOK_ABS        shift, and go to state 75
+    TOK_CHR        shift, and go to state 76
+    TOK_ODD        shift, and go to state 77
+    TOK_ORD        shift, and go to state 78
+    TOK_PRED       shift, and go to state 79
+    TOK_SQR        shift, and go to state 80
+    TOK_SQRT       shift, and go to state 81
+    TOK_SUCC       shift, and go to state 82
+    NAME           shift, and go to state 83
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 89
+    SYS_CON      go to state 90
+    expression   go to state 289
+    expr         go to state 92
+    term         go to state 93
+    factor       go to state 94
+    SYS_FUNCT    go to state 95
+
+
+State 266
+
+  132 expression_list: expression_list TOK_COMMA expression .
+  134 expression: expression . TOK_GE expr
+  135           | expression . TOK_GT expr
+  136           | expression . TOK_LE expr
+  137           | expression . TOK_LT expr
+  138           | expression . TOK_EQUAL expr
+  139           | expression . TOK_UNEQUAL expr
+
+    TOK_GE       shift, and go to state 133
+    TOK_GT       shift, and go to state 134
+    TOK_LE       shift, and go to state 135
+    TOK_LT       shift, and go to state 136
+    TOK_EQUAL    shift, and go to state 137
+    TOK_UNEQUAL  shift, and go to state 138
+
+    $default  reduce using rule 132 (expression_list)
+
+
+State 267
+
+  106 assign_stmt: NAME TOK_DOT NAME TOK_ASSIGN expression .
+  134 expression: expression . TOK_GE expr
+  135           | expression . TOK_GT expr
+  136           | expression . TOK_LE expr
+  137           | expression . TOK_LT expr
+  138           | expression . TOK_EQUAL expr
+  139           | expression . TOK_UNEQUAL expr
+
+    TOK_GE       shift, and go to state 133
+    TOK_GT       shift, and go to state 134
+    TOK_LE       shift, and go to state 135
+    TOK_LT       shift, and go to state 136
+    TOK_EQUAL    shift, and go to state 137
+    TOK_UNEQUAL  shift, and go to state 138
+
+    $default  reduce using rule 106 (assign_stmt)
+
+
+State 268
+
+   41 simple_type_decl: TOK_LP name_list TOK_RP .
+
+    $default  reduce using rule 41 (simple_type_decl)
+
+
+State 269
+
+   43 simple_type_decl: TOK_MINUS const_value TOK_DOT . TOK_DOT const_value
+   44                 | TOK_MINUS const_value TOK_DOT . TOK_DOT TOK_MINUS const_value
+
+    TOK_DOT  shift, and go to state 290
+
+
+State 270
+
+   51 array_type_decl: TOK_ARRAY TOK_LB simple_type_decl . TOK_RB TOK_OF type_decl
+
+    TOK_RB  shift, and go to state 291
+
+
+State 271
+
+   57 field_decl: error $@5 . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 292
+
+
+State 272
+
+   52 record_type_decl: TOK_RECORD field_decl_list TOK_END .
+
+    $default  reduce using rule 52 (record_type_decl)
+
+
+State 273
+
+   53 field_decl_list: field_decl_list field_decl .
+
+    $default  reduce using rule 53 (field_decl_list)
+
+
+State 274
+
+   55 field_decl: name_list TOK_COLON . type_decl TOK_SEMI
+
+    TOK_LP         shift, and go to state 166
+    TOK_MINUS      shift, and go to state 167
+    TOK_ARRAY      shift, and go to state 168
+    TOK_RECORD     shift, and go to state 169
+    TOK_INTEGER    shift, and go to state 170
+    TOK_REAL       shift, and go to state 171
+    TOK_CHAR       shift, and go to state 172
+    TOK_STRING     shift, and go to state 173
+    TOK_BOOLEAN    shift, and go to state 174
+    TOK_MAXINT     shift, and go to state 74
+    NAME           shift, and go to state 175
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value       go to state 176
+    SYS_CON           go to state 90
+    type_decl         go to state 293
+    simple_type_decl  go to state 178
+    SYS_TYPE          go to state 179
+    array_type_decl   go to state 180
+    record_type_decl  go to state 181
+
+
+State 275
+
+   45 simple_type_decl: NAME TOK_DOT TOK_DOT . NAME
+
+    NAME  shift, and go to state 294
+
+
+State 276
+
+   42 simple_type_decl: const_value TOK_DOT TOK_DOT . const_value
+
+    TOK_MAXINT     shift, and go to state 74
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 295
+    SYS_CON      go to state 90
+
+
+State 277
+
+   64 var_decl: name_list TOK_COLON type_decl TOK_SEMI .
+
+    $default  reduce using rule 64 (var_decl)
+
+
+State 278
+
+   79 parameters: TOK_LP . para_decl_list TOK_RP
+
+    TOK_VAR  shift, and go to state 296
+    NAME     shift, and go to state 115
+
+    name_list       go to state 297
+    para_decl_list  go to state 298
+    para_type_list  go to state 299
+    var_para_list   go to state 300
+    val_para_list   go to state 301
+
+
+State 279
+
+   78 procedure_head: TOK_PROCEDURE NAME $@8 parameters .
+
+    $default  reduce using rule 78 (procedure_head)
+
+
+State 280
+
+   75 function_head: TOK_FUNCTION NAME $@7 parameters . TOK_COLON simple_type_decl
+
+    TOK_COLON  shift, and go to state 302
+
+
+State 281
+
+   73 function_decl: function_head TOK_SEMI sub_routine TOK_SEMI .
+
+    $default  reduce using rule 73 (function_decl)
+
+
+State 282
+
+    6 sub_routine: routine_head routine_body .
+
+    $default  reduce using rule 6 (sub_routine)
+
+
+State 283
+
+   76 procedure_decl: procedure_head TOK_SEMI sub_routine TOK_SEMI .
+
+    $default  reduce using rule 76 (procedure_decl)
+
+
+State 284
+
+  117 else_clause: TOK_ELSE stmt .
+
+    $default  reduce using rule 117 (else_clause)
+
+
+State 285
+
+  121 for_stmt: TOK_FOR NAME TOK_ASSIGN expression direction expression . TOK_DO stmt
+  134 expression: expression . TOK_GE expr
+  135           | expression . TOK_GT expr
+  136           | expression . TOK_LE expr
+  137           | expression . TOK_LT expr
+  138           | expression . TOK_EQUAL expr
+  139           | expression . TOK_UNEQUAL expr
+
+    TOK_GE       shift, and go to state 133
+    TOK_GT       shift, and go to state 134
+    TOK_LE       shift, and go to state 135
+    TOK_LT       shift, and go to state 136
+    TOK_EQUAL    shift, and go to state 137
+    TOK_UNEQUAL  shift, and go to state 138
+    TOK_DO       shift, and go to state 303
+
+
+State 286
+
+  130 case_expr: error $@9 TOK_SEMI .
+
+    $default  reduce using rule 130 (case_expr)
+
+
+State 287
+
+  128 case_expr: NAME TOK_COLON stmt . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 304
+
+
+State 288
+
+  127 case_expr: const_value TOK_COLON stmt . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 305
+
+
+State 289
+
+  105 assign_stmt: NAME TOK_LB expression_list TOK_RB TOK_ASSIGN expression .
+  134 expression: expression . TOK_GE expr
+  135           | expression . TOK_GT expr
+  136           | expression . TOK_LE expr
+  137           | expression . TOK_LT expr
+  138           | expression . TOK_EQUAL expr
+  139           | expression . TOK_UNEQUAL expr
+
+    TOK_GE       shift, and go to state 133
+    TOK_GT       shift, and go to state 134
+    TOK_LE       shift, and go to state 135
+    TOK_LT       shift, and go to state 136
+    TOK_EQUAL    shift, and go to state 137
+    TOK_UNEQUAL  shift, and go to state 138
+
+    $default  reduce using rule 105 (assign_stmt)
+
+
+State 290
+
+   43 simple_type_decl: TOK_MINUS const_value TOK_DOT TOK_DOT . const_value
+   44                 | TOK_MINUS const_value TOK_DOT TOK_DOT . TOK_MINUS const_value
+
+    TOK_MINUS      shift, and go to state 306
+    TOK_MAXINT     shift, and go to state 74
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 307
+    SYS_CON      go to state 90
+
+
+State 291
+
+   51 array_type_decl: TOK_ARRAY TOK_LB simple_type_decl TOK_RB . TOK_OF type_decl
+
+    TOK_OF  shift, and go to state 308
+
+
+State 292
+
+   57 field_decl: error $@5 TOK_SEMI .
+
+    $default  reduce using rule 57 (field_decl)
+
+
+State 293
+
+   55 field_decl: name_list TOK_COLON type_decl . TOK_SEMI
+
+    TOK_SEMI  shift, and go to state 309
+
+
+State 294
+
+   45 simple_type_decl: NAME TOK_DOT TOK_DOT NAME .
+
+    $default  reduce using rule 45 (simple_type_decl)
+
+
+State 295
+
+   42 simple_type_decl: const_value TOK_DOT TOK_DOT const_value .
+
+    $default  reduce using rule 42 (simple_type_decl)
+
+
+State 296
+
+   86 var_para_list: TOK_VAR . name_list
+
+    NAME  shift, and go to state 115
+
+    name_list  go to state 310
+
+
+State 297
+
+   58 name_list: name_list . TOK_COMMA NAME
+   87 val_para_list: name_list .
+
+    TOK_COMMA  shift, and go to state 183
+
+    $default  reduce using rule 87 (val_para_list)
+
+
+State 298
+
+   79 parameters: TOK_LP para_decl_list . TOK_RP
+   81 para_decl_list: para_decl_list . TOK_SEMI para_type_list
+   83               | para_decl_list . TOK_SEMI error
+
+    TOK_RP    shift, and go to state 311
+    TOK_SEMI  shift, and go to state 312
+
+
+State 299
+
+   82 para_decl_list: para_type_list .
+
+    $default  reduce using rule 82 (para_decl_list)
+
+
+State 300
+
+   84 para_type_list: var_para_list . TOK_COLON simple_type_decl
+
+    TOK_COLON  shift, and go to state 313
+
+
+State 301
+
+   85 para_type_list: val_para_list . TOK_COLON simple_type_decl
+
+    TOK_COLON  shift, and go to state 314
+
+
+State 302
+
+   75 function_head: TOK_FUNCTION NAME $@7 parameters TOK_COLON . simple_type_decl
+
+    TOK_LP         shift, and go to state 166
+    TOK_MINUS      shift, and go to state 167
+    TOK_INTEGER    shift, and go to state 170
+    TOK_REAL       shift, and go to state 171
+    TOK_CHAR       shift, and go to state 172
+    TOK_STRING     shift, and go to state 173
+    TOK_BOOLEAN    shift, and go to state 174
+    TOK_MAXINT     shift, and go to state 74
+    NAME           shift, and go to state 175
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value       go to state 176
+    SYS_CON           go to state 90
+    simple_type_decl  go to state 315
+    SYS_TYPE          go to state 179
+
+
+State 303
+
+  121 for_stmt: TOK_FOR NAME TOK_ASSIGN expression direction expression TOK_DO . stmt
+
+    error          shift, and go to state 35
+    TOK_EXIT       shift, and go to state 36
+    TOK_BEGIN      shift, and go to state 20
+    TOK_IF         shift, and go to state 38
+    TOK_FOR        shift, and go to state 39
+    TOK_CASE       shift, and go to state 40
+    TOK_WHILE      shift, and go to state 41
+    TOK_REPEAT     shift, and go to state 42
+    TOK_GOTO       shift, and go to state 43
+    TOK_WRITELN    shift, and go to state 44
+    TOK_WRITE      shift, and go to state 45
+    TOK_READ       shift, and go to state 46
+    NAME           shift, and go to state 47
+    CONST_INTEGER  shift, and go to state 48
+
+    compound_stmt   go to state 49
+    stmt            go to state 316
+    non_label_stmt  go to state 51
+    assign_stmt     go to state 52
+    proc_stmt       go to state 53
+    SYS_PROC        go to state 54
+    if_stmt         go to state 55
+    repeat_stmt     go to state 56
+    while_stmt      go to state 57
+    for_stmt        go to state 58
+    case_stmt       go to state 59
+    goto_stmt       go to state 60
+
+
+State 304
+
+  128 case_expr: NAME TOK_COLON stmt TOK_SEMI .
+
+    $default  reduce using rule 128 (case_expr)
+
+
+State 305
+
+  127 case_expr: const_value TOK_COLON stmt TOK_SEMI .
+
+    $default  reduce using rule 127 (case_expr)
+
+
+State 306
+
+   44 simple_type_decl: TOK_MINUS const_value TOK_DOT TOK_DOT TOK_MINUS . const_value
+
+    TOK_MAXINT     shift, and go to state 74
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value  go to state 317
+    SYS_CON      go to state 90
+
+
+State 307
+
+   43 simple_type_decl: TOK_MINUS const_value TOK_DOT TOK_DOT const_value .
+
+    $default  reduce using rule 43 (simple_type_decl)
+
+
+State 308
+
+   51 array_type_decl: TOK_ARRAY TOK_LB simple_type_decl TOK_RB TOK_OF . type_decl
+
+    TOK_LP         shift, and go to state 166
+    TOK_MINUS      shift, and go to state 167
+    TOK_ARRAY      shift, and go to state 168
+    TOK_RECORD     shift, and go to state 169
+    TOK_INTEGER    shift, and go to state 170
+    TOK_REAL       shift, and go to state 171
+    TOK_CHAR       shift, and go to state 172
+    TOK_STRING     shift, and go to state 173
+    TOK_BOOLEAN    shift, and go to state 174
+    TOK_MAXINT     shift, and go to state 74
+    NAME           shift, and go to state 175
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value       go to state 176
+    SYS_CON           go to state 90
+    type_decl         go to state 318
+    simple_type_decl  go to state 178
+    SYS_TYPE          go to state 179
+    array_type_decl   go to state 180
+    record_type_decl  go to state 181
+
+
+State 309
+
+   55 field_decl: name_list TOK_COLON type_decl TOK_SEMI .
+
+    $default  reduce using rule 55 (field_decl)
+
+
+State 310
+
+   58 name_list: name_list . TOK_COMMA NAME
+   86 var_para_list: TOK_VAR name_list .
+
+    TOK_COMMA  shift, and go to state 183
+
+    $default  reduce using rule 86 (var_para_list)
+
+
+State 311
+
+   79 parameters: TOK_LP para_decl_list TOK_RP .
+
+    $default  reduce using rule 79 (parameters)
+
+
+State 312
+
+   81 para_decl_list: para_decl_list TOK_SEMI . para_type_list
+   83               | para_decl_list TOK_SEMI . error
+
+    error    shift, and go to state 319
+    TOK_VAR  shift, and go to state 296
+    NAME     shift, and go to state 115
+
+    name_list       go to state 297
+    para_type_list  go to state 320
+    var_para_list   go to state 300
+    val_para_list   go to state 301
+
+
+State 313
+
+   84 para_type_list: var_para_list TOK_COLON . simple_type_decl
+
+    TOK_LP         shift, and go to state 166
+    TOK_MINUS      shift, and go to state 167
+    TOK_INTEGER    shift, and go to state 170
+    TOK_REAL       shift, and go to state 171
+    TOK_CHAR       shift, and go to state 172
+    TOK_STRING     shift, and go to state 173
+    TOK_BOOLEAN    shift, and go to state 174
+    TOK_MAXINT     shift, and go to state 74
+    NAME           shift, and go to state 175
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value       go to state 176
+    SYS_CON           go to state 90
+    simple_type_decl  go to state 321
+    SYS_TYPE          go to state 179
+
+
+State 314
+
+   85 para_type_list: val_para_list TOK_COLON . simple_type_decl
+
+    TOK_LP         shift, and go to state 166
+    TOK_MINUS      shift, and go to state 167
+    TOK_INTEGER    shift, and go to state 170
+    TOK_REAL       shift, and go to state 171
+    TOK_CHAR       shift, and go to state 172
+    TOK_STRING     shift, and go to state 173
+    TOK_BOOLEAN    shift, and go to state 174
+    TOK_MAXINT     shift, and go to state 74
+    NAME           shift, and go to state 175
+    CONST_INTEGER  shift, and go to state 84
+    CONST_REAL     shift, and go to state 85
+    CONST_CHAR     shift, and go to state 86
+    CONST_STRING   shift, and go to state 87
+    CONST_BOOLEAN  shift, and go to state 88
+
+    const_value       go to state 176
+    SYS_CON           go to state 90
+    simple_type_decl  go to state 322
+    SYS_TYPE          go to state 179
+
+
+State 315
+
+   75 function_head: TOK_FUNCTION NAME $@7 parameters TOK_COLON simple_type_decl .
+
+    $default  reduce using rule 75 (function_head)
+
+
+State 316
+
+  121 for_stmt: TOK_FOR NAME TOK_ASSIGN expression direction expression TOK_DO stmt .
+
+    $default  reduce using rule 121 (for_stmt)
+
+
+State 317
+
+   44 simple_type_decl: TOK_MINUS const_value TOK_DOT TOK_DOT TOK_MINUS const_value .
+
+    $default  reduce using rule 44 (simple_type_decl)
+
+
+State 318
+
+   51 array_type_decl: TOK_ARRAY TOK_LB simple_type_decl TOK_RB TOK_OF type_decl .
+
+    $default  reduce using rule 51 (array_type_decl)
+
+
+State 319
+
+   83 para_decl_list: para_decl_list TOK_SEMI error .
+
+    $default  reduce using rule 83 (para_decl_list)
+
+
+State 320
+
+   81 para_decl_list: para_decl_list TOK_SEMI para_type_list .
+
+    $default  reduce using rule 81 (para_decl_list)
+
+
+State 321
+
+   84 para_type_list: var_para_list TOK_COLON simple_type_decl .
+
+    $default  reduce using rule 84 (para_type_list)
+
+
+State 322
+
+   85 para_type_list: val_para_list TOK_COLON simple_type_decl .
+
+    $default  reduce using rule 85 (para_type_list)

@@ -1,0 +1,6 @@
+ERROR at line 2 : syntax error when parsing (lab)
+ERROR at line 4 : syntax error when parsing (;)
+ERROR at line 6 : syntax error when parsing (:=)
+ERROR at line 9 : syntax error when parsing (=)
+ERROR at line 11 : syntax error when parsing (=)
+There still have 5 error exist(s).

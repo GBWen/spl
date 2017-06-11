@@ -1,0 +1,9 @@
+(0)    :=,A,,Temp0
+(1)    :=,A,,Temp1
+(2)    :=,2,,Temp2
+(3)    *,Temp1,Temp2,Temp3
+(4)    :=,3,,Temp4
+(5)    +,Temp3,Temp4,Temp5
+(6)    :=,Temp5,,Temp0
+(7)    :=,Temp0,,A
+(8)    end,,,

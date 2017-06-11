@@ -1,0 +1,656 @@
+Sub-program number 3
+-----print Header-----
+	program
+	test
+	;
+-----print Decl-----
+Decl : 1001
+	label
+	1001
+	;
+Decl : 122
+	label
+	122
+	;
+Decl : A
+	integer
+Decl : AA
+123
+Decl : B
+	integer
+Decl : BirthDay
+	Date
+Decl : C
+	integer
+Decl : D
+	real
+Decl : Date
+	record
+				Month
+			:
+				integer
+			;
+				Day
+			:
+				integer
+			;
+				Year
+			:
+				integer
+			;
+	end
+Decl : DayTemperatures
+	array
+	[
+		1
+		.
+		.
+		24
+	]
+	of
+		integer
+Decl : Diary
+	record
+				writeDownDate
+			:
+				Date
+			;
+				title
+				content
+			:
+				string
+			;
+	end
+Decl : DiaryBook
+	record
+				content
+			:
+				array
+				[
+					1
+					.
+					.
+					31
+				]
+				of
+					Date
+			;
+				buyDate
+			:
+				Date
+			;
+				author
+			:
+				string
+			;
+	end
+Decl : E
+	real
+Decl : F
+	real
+Decl : G
+	char
+Decl : H
+	char
+Decl : J
+	boolean
+Decl : K
+	boolean
+Decl : L
+	boolean
+Decl : MonthTemps
+	array
+	[
+		1
+		.
+		.
+		31
+	]
+	of
+		DayTemperatures
+Decl : OverHundred
+	100
+	.
+	.
+	1000
+Decl : ThisMonth
+	MonthTemps
+Decl : UppLetter
+	UpperCase
+Decl : UpperCase
+	A
+	.
+	.
+	Z
+Decl : testArrayRange
+	array
+	[
+		OverHundred
+	]
+	of
+		integer
+Decl : testArrayRange2
+	array
+	[
+		integer
+	]
+	of
+		integer
+Decl : twoDimention
+	array
+	[
+		1
+		.
+		.
+		5
+	]
+	of
+		array
+		[
+			1
+			.
+			.
+			5
+		]
+		of
+			integer
+Decl : txt
+	string
+-----print Proc-----
+Proc : testfor
+	Sub-program number 1
+	-----print Header-----
+		procedure
+		testfor
+			(
+							A
+							B
+					:
+						integer
+			)
+	-----print Decl-----
+	Decl : A
+		integer
+	Decl : B
+		integer
+	Decl : i
+		integer
+	Decl : j
+		integer
+	Decl : k
+		integer
+	-----print Proc-----
+	Proc : MyProcedure
+		Sub-program number 0
+		-----print Header-----
+			procedure
+			MyProcedure
+		-----print Decl-----
+		-----print Proc-----
+		-----print Param-----
+		-----print Block-----
+			read
+				(
+					k
+				)
+		-----end Block-----
+	-----print Param-----
+	name: A reference: 0
+		integer
+	name: B reference: 0
+		integer
+	-----print Block-----
+		:=
+			k
+			0
+		MyProcedure
+		for
+			for
+			i
+			:=
+			A
+			to
+			B
+			do
+				for
+					for
+					j
+					:=
+					B
+					downto
+					A
+					do
+						:=
+							k
+							succ
+								(
+									k
+								)
+		writeln
+			(
+				k
+			)
+	-----end Block-----
+Proc : testrepeat
+	Sub-program number 0
+	-----print Header-----
+		function
+		testrepeat
+			(
+						var
+							A
+					:
+						integer
+			)
+		:
+			real
+	-----print Decl-----
+	Decl : A
+		integer
+	Decl : count
+		real
+	-----print Proc-----
+	-----print Param-----
+	name: A reference: 1
+		integer
+	-----print Block-----
+		:=
+			count
+			0
+		repeat
+			repeat
+					:=
+						count
+						+
+							count
+							0.5
+					:=
+						count
+						-
+							count
+							5e-3
+					:=
+						count
+						*
+							count
+							-0.6
+					:=
+						A
+						pred
+							(
+								A
+							)
+			until
+				<=
+					A
+					0
+		exit
+			count
+	-----end Block-----
+Proc : testwhile
+	Sub-program number 0
+	-----print Header-----
+		procedure
+		testwhile
+			(
+							A
+							B
+					:
+						integer
+			)
+	-----print Decl-----
+	Decl : A
+		integer
+	Decl : B
+		integer
+	Decl : C
+	123
+	-----print Proc-----
+	-----print Param-----
+	name: A reference: 0
+		integer
+	name: B reference: 0
+		integer
+	-----print Block-----
+		while
+			while
+			<
+				A
+				C
+			do
+				:=
+					B
+					pred
+						(
+							B
+						)
+		writeln
+			(
+				B
+			)
+	-----end Block-----
+-----print Param-----
+-----print Block-----
+	read
+		(
+			A
+		)
+	:=
+		B
+		A
+	write
+		(
+			B
+		)
+	:=
+		A
+		maxint
+	:=
+		D
+		1E5
+	:=
+		E
+		-1e+5
+	:=
+		F
+		+0.005
+	:=
+		A
+		+0
+	:=
+		A
+		-
+			-
+				-
+					-
+						-
+							-
+								-
+									-1
+	:=
+		UppLetter
+		E
+	:=
+		ThisMonth
+			[
+			2
+			,
+			1
+			]
+		30
+	:=
+		ThisMonth
+			[
+			1
+			]
+		ThisMonth
+			[
+			2
+			]
+	:=
+		.
+			BirthDay
+			Year
+		1900
+	:=
+		.
+			BirthDay
+			Month
+		1
+	:=
+		.
+			BirthDay
+			Day
+		1
+	:
+		1001
+		:=
+			A
+			.
+				BirthDay
+				Year
+	:=
+		C
+		B
+	:
+		122
+		:=
+			C
+			*
+				A
+				2
+	if
+		if
+		>=
+			A
+			B
+		then
+				:=
+					C
+					*
+						A
+						3
+	if
+		if
+		<
+			A
+			C
+		then
+			:=
+				B
+				C
+		else
+			:=
+				B
+				A
+	:=
+		D
+		E
+	:=
+		E
+		F
+	:=
+		F
+		testrepeat
+			(
+				A
+			)
+	testfor
+		(
+			A
+			42
+		)
+	testwhile
+		(
+			A
+			*
+				div
+					123
+					41
+				5
+		)
+	:=
+		G
+		C
+	:=
+		A
+		ord
+			(
+				G
+			)
+	:=
+		B
+		succ
+			(
+				pred
+					(
+						succ
+							(
+								A
+							)
+					)
+			)
+	:=
+		H
+		chr
+			(
+				B
+			)
+	write
+		(
+			G
+		)
+	writeln
+		(
+			H
+		)
+	:=
+		J
+		odd
+			(
+				abs
+					(
+						-
+							B
+					)
+			)
+	:=
+		K
+		not
+			not
+				not
+					not
+						not
+							not
+								odd
+									(
+										mod
+											shr
+												shl
+													B
+													2
+												1
+											3
+									)
+	:=
+		L
+		xor
+			or
+				and
+					J
+					K
+				J
+			K
+	:=
+		A
+		-
+			*
+				90
+				B
+			div
+				maxint
+				3
+	:=
+		D
+		-
+			+
+				/
+					A
+					5.3e-2
+				6
+			8E1
+	:=
+		J
+		or
+			>=
+				D
+				A
+			>
+				A
+				B
+	:=
+		K
+		or
+			<=
+				C
+				A
+			<
+				C
+				B
+	:=
+		L
+		and
+			and
+				=
+					D
+					A
+				<>
+					A
+					B
+			L
+	:=
+		L
+		or
+			and
+				true
+				false
+			and
+				true
+				J
+	:=
+		twoDimention
+			[
+			2
+			,
+			2
+			]
+		1
+	:=
+		twoDimention
+			[
+			2
+			,
+			3
+			]
+		twoDimention
+			[
+				2
+				2
+			]
+	:=
+		txt
+		'{this is not a comment}'
+	:=
+		UppLetter
+		succ
+			(
+				UppLetter
+			)
+	case
+		case
+		A
+		of
+				case:
+					1
+					:=
+						txt
+						'One'
+				case:
+					2
+					:=
+						txt
+						'Two'
+				case:
+					3
+					:=
+						txt
+						'Three'
+				case:
+					4
+					goto
+						1001
+				case:
+					5
+					goto
+						122
+-----end Block-----

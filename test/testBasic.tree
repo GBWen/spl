@@ -1,0 +1,14 @@
+Sub-program number 0
+-----print Header-----
+	program
+	testBasic
+	;
+-----print Decl-----
+-----print Proc-----
+-----print Param-----
+-----print Block-----
+	writeln
+		(
+			1
+		)
+-----end Block-----
